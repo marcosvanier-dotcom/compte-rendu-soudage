@@ -6280,6 +6280,21 @@ initApp();
       </div>
     </div>
 
+    <!-- LICENCE — fonctionnalité Pro -->
+    <div id="ai-license-lock" style="display:none;padding:32px 28px;text-align:center;">
+      <div style="font-size:36px;margin-bottom:10px;">🔒</div>
+      <div style="font-size:15px;font-weight:700;color:#1a237e;margin-bottom:6px;">Fonctionnalité Pro</div>
+      <div style="font-size:12px;color:#666;margin-bottom:18px;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.6;">
+        L'import d'e-mail par IA est une fonctionnalité Pro. Entrez votre clé de licence pour l'activer sur ce navigateur.
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;max-width:380px;margin:0 auto;">
+        <input type="text" id="ai-license-input" placeholder="XXXX-XXXX-XXXX" autocomplete="off"
+          style="flex:1;padding:9px 12px;font-size:13px;border:1px solid #c5cae9;border-radius:7px;font-family:monospace;text-align:center;text-transform:uppercase;letter-spacing:1px;" />
+        <button onclick="_licActivate()" style="padding:9px 18px;font-size:12px;font-weight:700;background:#1a237e;color:#fff;border:none;border-radius:7px;cursor:pointer;">Activer</button>
+      </div>
+      <div id="ai-license-status" style="font-size:11px;margin-top:10px;display:none;"></div>
+    </div>
+
     <!-- CONFIG panel (Client ID) -->
     <div id="ai-config-panel" style="display:none;background:#f5f7ff;border-bottom:1px solid #e8eaf6;padding:14px 22px;">
       <div style="font-size:12px;font-weight:700;color:#1a237e;margin-bottom:8px;">🤖 Fournisseur d'IA pour l'analyse de l'e-mail</div>
@@ -6307,7 +6322,7 @@ initApp();
     </div>
 
     <!-- Body -->
-    <div style="padding:16px 22px;overflow-y:auto;flex:1;">
+    <div id="ai-body-content" style="padding:16px 22px;overflow-y:auto;flex:1;">
 
       <!-- ── FICHIER / COLLER ── -->
       <div class="ai-source-panel active" id="ai-panel-file">
@@ -6415,10 +6430,59 @@ const _AI_EDF_SITES     = ['SP3C','Golfech','Civaux','Bugey','Nogent','Bellevill
 let _aiExtracted   = [];
 let _aiFileContent = '';
 
+// ─── LICENCE (fonctionnalité Pro) ─────────────────────────────────
+// Vérification 100% locale : une clé valide est dérivée d'un sel secret via une
+// somme de contrôle (FNV-1a). Pas de serveur — c'est une protection "douce",
+// pas un mécanisme de sécurité fort (le code est visible côté client).
+const _LIC_STORAGE_KEY = 'cr-ai-license-key';
+const _LIC_SECRET = 'CR-SOUDAGE-EDF-PRO-2026';
+function _licFnv1a(str) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return h >>> 0;
+}
+function _licChecksum(s) {
+  const h = _licFnv1a(s + _LIC_SECRET);
+  return h.toString(36).toUpperCase().padStart(8, '0').slice(-4);
+}
+function _licIsValidKey(key) {
+  const parts = String(key || '').trim().toUpperCase().split('-');
+  if (parts.length !== 3) return false;
+  const [a, b, c] = parts;
+  if (a.length !== 4 || b.length !== 4 || c.length !== 4) return false;
+  return c === _licChecksum(a + b);
+}
+function _licIsActive() {
+  return _licIsValidKey(localStorage.getItem(_LIC_STORAGE_KEY) || '');
+}
+function _licActivate() {
+  const input = document.getElementById('ai-license-input');
+  const key = input.value.trim();
+  const st = document.getElementById('ai-license-status');
+  if (!_licIsValidKey(key)) {
+    st.style.display = 'block'; st.style.color = '#c62828';
+    st.textContent = '⚠️ Clé de licence invalide.';
+    return;
+  }
+  localStorage.setItem(_LIC_STORAGE_KEY, key.toUpperCase());
+  st.style.display = 'block'; st.style.color = '#2e7d32';
+  st.textContent = '✅ Licence activée !';
+  setTimeout(_aiApplyLicenseGate, 400);
+}
+function _aiApplyLicenseGate() {
+  const active = _licIsActive();
+  document.getElementById('ai-license-lock').style.display = active ? 'none' : 'block';
+  document.getElementById('ai-body-content').style.display = active ? '' : 'none';
+  if (active) _aiShowSourceUI();
+}
+
 // ─── OPEN / CLOSE ───────────────────────────────────────────────
 function openAIEmailModal() {
   document.getElementById('ai-email-modal').style.display = 'flex';
-  _aiShowSourceUI();
+  _aiApplyLicenseGate();
 }
 function closeAIEmailModal() {
   document.getElementById('ai-email-modal').style.display = 'none';
