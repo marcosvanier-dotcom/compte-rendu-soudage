@@ -7463,10 +7463,11 @@ function _tkSaveTicket() {
       ticket.history.push({ date: now, text: `Statut changé : ${TK_STATUS_LABELS[ticket.status]||ticket.status} → ${TK_STATUS_LABELS[newStatus]||newStatus}` });
     }
     ticket.status = newStatus;
-    ticket.site = site;
-    ticket.priseEnCompte = priseEnCompte;
-    ticket.priseDate = priseDate;
-    ticket.equip = ticket.type === 'equipement-degrade' ? _tkCollectEquipFields() : undefined;
+    const isEquip = ticket.type === 'equipement-degrade';
+    ticket.site = isEquip ? undefined : site;
+    ticket.priseEnCompte = isEquip ? undefined : priseEnCompte;
+    ticket.priseDate = isEquip ? undefined : priseDate;
+    ticket.equip = isEquip ? _tkCollectEquipFields() : undefined;
     ticket.updatedAt = now;
     if (!_tkSave(tickets)) return;
     showToast(`✅ Ticket ${ticket.number} mis à jour.`);
@@ -7480,9 +7481,9 @@ function _tkSaveTicket() {
       description: document.getElementById('tk-input-desc').value.trim(),
       priority: document.getElementById('tk-input-priority').value,
       status: document.getElementById('tk-input-status').value,
-      site,
-      priseEnCompte,
-      priseDate,
+      site: type === 'equipement-degrade' ? undefined : site,
+      priseEnCompte: type === 'equipement-degrade' ? undefined : priseEnCompte,
+      priseDate: type === 'equipement-degrade' ? undefined : priseDate,
       equip: type === 'equipement-degrade' ? _tkCollectEquipFields() : undefined,
       createdAt: now, updatedAt: now,
       history: [{ date: now, text: `Ticket créé (statut initial : ${TK_STATUS_LABELS[document.getElementById('tk-input-status').value] || document.getElementById('tk-input-status').value}).` }],
