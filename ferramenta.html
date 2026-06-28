@@ -6920,6 +6920,13 @@ function runAIExtraction() { _aiRunFileExtraction(); }
           <input type="text" id="tk-input-linked" placeholder="Saisir le site..." />
         </div>
 
+        <!-- Export du ticket (Incident / Non-conformité / Demande) -->
+        <div id="tk-generic-export-row" style="margin-top:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <button onclick="_tkPrintGenericTicket()" style="font-size:11px;background:#fce4ec;border:1px solid #f48fb1;color:#ad1457;border-radius:6px;padding:6px 14px;cursor:pointer;font-weight:600;">⬇ PDF</button>
+          <button onclick="_tkExportGenericWord()" style="font-size:11px;background:#e3f2fd;border:1px solid #90caf9;color:#0d47a1;border-radius:6px;padding:6px 14px;cursor:pointer;font-weight:600;">⬇ Word</button>
+          <button onclick="_tkExportGenericExcel()" style="font-size:11px;background:#e8f5e9;border:1px solid #a5d6a7;color:#2e7d32;border-radius:6px;padding:6px 14px;cursor:pointer;font-weight:600;">⬇ Excel</button>
+        </div>
+
         <!-- Bloc Fiche de situation dégradée (équipement) -->
         <div id="tk-equip-block" style="display:none;margin-top:14px;border:1px solid #e0e0e0;border-radius:8px;padding:12px 14px;background:#fafafa;">
           <div style="font-size:12px;font-weight:700;color:#37474f;margin-bottom:8px;">🔧 Fiche de situation dégradée — Équipement</div>
@@ -7121,6 +7128,7 @@ function _tkToggleEquipBlock() {
   const isEquip = document.getElementById('tk-input-type').value === 'equipement-degrade';
   document.getElementById('tk-equip-block').style.display = isEquip ? 'block' : 'none';
   document.getElementById('tk-linked-field').style.display = isEquip ? 'none' : 'block';
+  document.getElementById('tk-generic-export-row').style.display = isEquip ? 'none' : 'flex';
 }
 function _tkOpenImage(src) {
   const w = window.open('', '_blank');
@@ -7294,6 +7302,71 @@ function _tkExportFicheExcel() {
     .lbl{font-weight:700;background:#f0f0f0;width:160px;}
     .hdr{font-weight:700;background:#cfd8dc;text-align:center;font-size:13pt;}
     img{max-width:160px;max-height:120px;}
+  </style></head><body>${tables}</body></html>`;
+  dlFile(html, _tkFicheFileName() + '.xls', 'application/vnd.ms-excel;charset=utf-8');
+}
+// ─── Export générique (Incident / Non-conformité / Demande) ──────
+function _tkBuildGenericTicketTables() {
+  const title = document.getElementById('tk-input-title').value.trim() || '(sans titre)';
+  const type = document.getElementById('tk-input-type').value;
+  const desc = document.getElementById('tk-input-desc').value.trim();
+  const priority = document.getElementById('tk-input-priority').value;
+  const status = document.getElementById('tk-input-status').value;
+  const site = document.getElementById('tk-input-linked').value.trim();
+  const number = (_tkEditingId && (_tkLoad().find(t=>t.id===_tkEditingId)||{}).number) || '—';
+  const histTicket = _tkEditingId ? _tkLoad().find(t=>t.id===_tkEditingId) : null;
+  const histHTML = (histTicket && histTicket.history && histTicket.history.length)
+    ? histTicket.history.map(h => `${new Date(h.date).toLocaleString('fr-FR')} — ${escHtml(h.text)}`).join('<br>')
+    : '—';
+  return `
+  <table><tr><td class="hdr" colspan="4">${TK_TYPE_LABELS[type]||type} — ${escHtml(title)}</td></tr>
+  <tr><td class="lbl">N° ticket</td><td>${escHtml(number)}</td><td class="lbl">Site</td><td>${escHtml(site)}</td></tr>
+  <tr><td class="lbl">Priorité</td><td>${escHtml(TK_PRIORITY_LABELS[priority]||priority)}</td><td class="lbl">Statut</td><td>${escHtml(TK_STATUS_LABELS[status]||status)}</td></tr>
+  </table>
+  <table><tr><td class="hdr" colspan="2">Description</td></tr>
+  <tr><td>${escHtml(desc).replace(/\n/g,'<br>') || '—'}</td></tr>
+  </table>
+  <table><tr><td class="hdr" colspan="2">Historique</td></tr>
+  <tr><td>${histHTML}</td></tr>
+  </table>`;
+}
+function _tkPrintGenericTicket() {
+  const tables = _tkBuildGenericTicketTables();
+  const w = window.open('', '_blank');
+  if (!w) { showToast('⚠️ Bloqueur de popup : autorisez les fenêtres pour exporter le ticket.'); return; }
+  w.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Ticket</title>
+  <style>
+    body{font-family:Arial,sans-serif;font-size:12px;color:#000;margin:20px;}
+    table{width:100%;border-collapse:collapse;margin-bottom:14px;}
+    td,th{border:1px solid #000;padding:6px 8px;vertical-align:top;}
+    .lbl{font-weight:700;background:#f0f0f0;width:160px;}
+    .hdr{font-weight:700;background:#cfd8dc;text-align:center;font-size:13px;}
+  </style></head><body>${tables}
+  <script>window.onload=()=>window.print();<\/script>
+  </body></html>`);
+  w.document.close();
+}
+function _tkExportGenericWord() {
+  const tables = _tkBuildGenericTicketTables();
+  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><title>Ticket</title>
+  <style>
+    body{font-family:Arial,sans-serif;font-size:11pt;color:#000;}
+    table{width:100%;border-collapse:collapse;margin-bottom:14px;}
+    td,th{border:1px solid #000;padding:6px 8px;vertical-align:top;}
+    .lbl{font-weight:700;background:#f0f0f0;width:160px;}
+    .hdr{font-weight:700;background:#cfd8dc;text-align:center;font-size:13pt;}
+  </style></head><body>${tables}</body></html>`;
+  dlFile(html, _tkFicheFileName() + '.doc', 'application/msword;charset=utf-8');
+}
+function _tkExportGenericExcel() {
+  const tables = _tkBuildGenericTicketTables();
+  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><title>Ticket</title>
+  <style>
+    body{font-family:Arial,sans-serif;font-size:10pt;color:#000;}
+    table{width:100%;border-collapse:collapse;margin-bottom:14px;}
+    td,th{border:1px solid #000;padding:6px 8px;vertical-align:top;}
+    .lbl{font-weight:700;background:#f0f0f0;width:160px;}
+    .hdr{font-weight:700;background:#cfd8dc;text-align:center;font-size:13pt;}
   </style></head><body>${tables}</body></html>`;
   dlFile(html, _tkFicheFileName() + '.xls', 'application/vnd.ms-excel;charset=utf-8');
 }
