@@ -6325,7 +6325,6 @@ initApp();
         <div style="display:flex;gap:4px;margin-bottom:12px;">
           <button class="ai-tab active" id="ai-subtab-drop" onclick="_aiSubTab('drop')" style="flex:none;padding:6px 14px;font-size:11px;">📂 Charger un fichier</button>
           <button class="ai-tab" id="ai-subtab-paste" onclick="_aiSubTab('paste')" style="flex:none;padding:6px 14px;font-size:11px;">📋 Coller le texte</button>
-          <button class="ai-tab" id="ai-subtab-pst" onclick="showToast('⚠️ L\'import .pst nécessite le backend en ligne — utilisez la version publiée pour cela.')" style="flex:none;padding:6px 14px;font-size:11px;opacity:0.5;cursor:not-allowed;" title="Indisponible dans la version locale (sans backend)">📦 Importer .pst (en ligne)</button>
         </div>
 
         <!-- Drop zone -->
@@ -6348,36 +6347,6 @@ initApp();
           <textarea id="ai-email-text" rows="9"
             placeholder="Collez ici le texte de l'email (sujet, corps, destinataires...)&#10;&#10;Exemple :&#10;De : Jean Dupont&#10;Sujet : [Golfech] Affaire 2026-421 — Point soudage&#10;&#10;Après la réunion d'aujourd'hui :&#10;- Contrôle soudage joint 42A : Martin avant le 30/06&#10;- Validation procédure WPS-12 : en attente EDF&#10;- Formation TIG niveau 2 : à prévoir en juillet"
             style="width:100%;padding:10px 12px;font-size:12px;border:1px solid #c5cae9;border-radius:8px;resize:vertical;font-family:monospace;color:#333;line-height:1.6;background:#f9f9ff;"></textarea>
-        </div>
-
-        <!-- PST zone -->
-        <div id="ai-subpanel-pst" style="display:none;">
-          <div id="ai-pst-step-upload">
-            <div class="ai-dropzone" id="ai-pst-dropzone"
-              onclick="document.getElementById('ai-pst-file-input').click()"
-              ondragover="event.preventDefault();this.classList.add('dragover')"
-              ondragleave="this.classList.remove('dragover')"
-              ondrop="_aiHandlePstDrop(event)">
-              <div style="font-size:32px;margin-bottom:8px;">📦</div>
-              <div style="font-size:13px;font-weight:600;color:#1a237e;margin-bottom:4px;">Glissez le fichier .pst ici</div>
-              <div style="font-size:11px;color:#888;">ou cliquez pour sélectionner · max. 80 Mo</div>
-            </div>
-            <input type="file" id="ai-pst-file-input" accept=".pst" style="display:none;" onchange="_aiHandlePstInput(this)" />
-            <div id="ai-pst-status" style="display:none;margin-top:8px;font-size:11px;padding:6px 10px;border-radius:6px;"></div>
-          </div>
-          <div id="ai-pst-step-list" style="display:none;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-              <span id="ai-pst-count" style="font-size:11px;color:#666;font-weight:600;"></span>
-              <button onclick="_aiPstReset()" style="font-size:11px;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:4px 10px;cursor:pointer;color:#666;">↺ Charger un autre .pst</button>
-            </div>
-            <input type="text" placeholder="🔍 Filtrer par sujet/expéditeur..." oninput="_aiFilterPstEmails(this.value)"
-              style="width:100%;padding:7px 10px;font-size:12px;border:1px solid #e0e0e0;border-radius:7px;margin-bottom:8px;" />
-            <div id="ai-pst-email-list" style="max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;"></div>
-            <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
-              <button onclick="_aiAnalysePstSelected()" style="padding:8px 16px;font-size:12px;font-weight:700;background:#1a237e;color:#fff;border:none;border-radius:7px;cursor:pointer;">🤖 Analyser la sélection</button>
-              <span id="ai-pst-sel-count" style="font-size:11px;color:#666;"></span>
-            </div>
-          </div>
         </div>
 
         <!-- Detection chips -->
@@ -6458,13 +6427,10 @@ function _aiShowSourceUI() {
 
 // ─── TABS ────────────────────────────────────────────────────────
 function _aiSubTab(sub) {
-  ['drop','paste','pst'].forEach(s => {
+  ['drop','paste'].forEach(s => {
     document.getElementById('ai-subtab-' + s).classList.toggle('active', s === sub);
     document.getElementById('ai-subpanel-' + s).style.display = s === sub ? 'block' : 'none';
   });
-  const isPst = sub === 'pst';
-  document.getElementById('ai-file-detect-chips').style.display = isPst ? 'none' : 'flex';
-  document.getElementById('ai-file-run-row').style.display = isPst ? 'none' : 'flex';
 }
 
 // ─── CONFIG (Client ID) ──────────────────────────────────────────
@@ -6564,132 +6530,6 @@ async function _aiRunFileExtraction() {
   await _aiRunExtraction(emailText);
 }
 
-// ─── OPTION C : IMPORTER .PST ──────────────────────────────────────
-let _aiPstEmails = [];
-let _aiPstSelected = new Set();
-
-function _aiHandlePstDrop(e) {
-  e.preventDefault();
-  document.getElementById('ai-pst-dropzone').classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file) _aiUploadPst(file);
-}
-function _aiHandlePstInput(input) {
-  if (input.files[0]) _aiUploadPst(input.files[0]);
-}
-async function _aiUploadPst(file) {
-  if (!file.name.toLowerCase().endsWith('.pst')) {
-    _aiPstShowStatus('⚠️ Sélectionnez un fichier .pst.', '#c62828', '#ffebee');
-    return;
-  }
-  _aiPstShowStatus('⏳ Traitement de "' + file.name + '" (' + (file.size/1024/1024).toFixed(1) + ' Mo)... cela peut prendre un moment pour les fichiers volumineux.', '#1a237e', '#e8eaf6');
-
-  const formData = new FormData();
-  formData.append('file', file);
-  const token = localStorage.getItem('cr-auth-token');
-  const apiBase = window.__CR_API_BASE__ || 'https://cr-cellule-soudage-backend.onrender.com';
-
-  try {
-    const res = await fetch(apiBase + '/api/pst/upload', {
-      method: 'POST',
-      credentials: 'include',
-      headers: token ? { 'Authorization': 'Bearer ' + token } : {},
-      body: formData,
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || `Erreur ${res.status}`);
-
-    _aiPstEmails = data.messages || [];
-    _aiPstSelected = new Set(_aiPstEmails.map(m => m.id));
-    if (!_aiPstEmails.length) {
-      _aiPstShowStatus('⚠️ Aucun email trouvé dans le .pst.', '#e65100', '#fff3e0');
-      return;
-    }
-    document.getElementById('ai-pst-step-upload').style.display = 'none';
-    document.getElementById('ai-pst-step-list').style.display = 'block';
-    document.getElementById('ai-pst-count').textContent = _aiPstEmails.length + ' email(s) trouvé(s)' + (data.truncated ? ' (liste tronquée)' : '');
-    _aiRenderPstEmailList(_aiPstEmails);
-    _aiUpdatePstSelCount();
-  } catch (e) {
-    _aiPstShowStatus('❌ ' + e.message, '#c62828', '#ffebee');
-  }
-}
-function _aiPstShowStatus(msg, color, bg) {
-  const el = document.getElementById('ai-pst-status');
-  el.style.display = 'block';
-  el.style.color = color;
-  el.style.background = bg;
-  el.textContent = msg;
-}
-function _aiPstReset() {
-  _aiPstEmails = [];
-  _aiPstSelected = new Set();
-  document.getElementById('ai-pst-step-list').style.display = 'none';
-  document.getElementById('ai-pst-step-upload').style.display = 'block';
-  document.getElementById('ai-pst-status').style.display = 'none';
-  document.getElementById('ai-pst-file-input').value = '';
-}
-function _aiRenderPstEmailList(emails) {
-  const list = document.getElementById('ai-pst-email-list');
-  list.innerHTML = '';
-  if (!emails.length) {
-    list.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px;font-style:italic;">Aucun email trouvé.</div>';
-    return;
-  }
-  emails.forEach(m => {
-    const sel = _aiPstSelected.has(m.id);
-    const ds = m.date ? new Date(m.date).toLocaleDateString('fr-FR') : '';
-    const card = document.createElement('div');
-    card.className = 'ai-email-card' + (sel ? ' selected' : '');
-    card.id = 'ai-pst-mail-' + m.id;
-    card.onclick = () => _aiTogglePstEmail(m.id);
-    card.innerHTML = `
-      <div style="display:flex;align-items:flex-start;gap:8px;">
-        <input type="checkbox" ${sel?'checked':''} style="margin-top:3px;flex-shrink:0;cursor:pointer;" onclick="event.stopPropagation();_aiTogglePstEmail(${m.id})" />
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:12px;font-weight:600;color:#1a237e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(m.subject)}</div>
-          <div style="font-size:11px;color:#666;margin-top:2px;display:flex;gap:10px;flex-wrap:wrap;">
-            <span>👤 ${escHtml(m.senderName || m.senderEmail || '')}</span>
-            ${ds?`<span>🕐 ${ds}</span>`:''}
-          </div>
-          <div style="font-size:11px;color:#999;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(m.bodyPreview||'')}</div>
-        </div>
-      </div>`;
-    list.appendChild(card);
-  });
-}
-function _aiTogglePstEmail(id) {
-  if (_aiPstSelected.has(id)) _aiPstSelected.delete(id);
-  else _aiPstSelected.add(id);
-  const card = document.getElementById('ai-pst-mail-' + id);
-  if (card) {
-    card.classList.toggle('selected', _aiPstSelected.has(id));
-    const cb = card.querySelector('input[type=checkbox]');
-    if (cb) cb.checked = _aiPstSelected.has(id);
-  }
-  _aiUpdatePstSelCount();
-}
-function _aiFilterPstEmails(q) {
-  const lq = q.toLowerCase();
-  _aiRenderPstEmailList(lq ? _aiPstEmails.filter(m =>
-    (m.subject||'').toLowerCase().includes(lq) ||
-    (m.senderName||'').toLowerCase().includes(lq) ||
-    (m.senderEmail||'').toLowerCase().includes(lq)
-  ) : _aiPstEmails);
-}
-function _aiUpdatePstSelCount() {
-  const n = _aiPstSelected.size;
-  document.getElementById('ai-pst-sel-count').textContent = n ? n + ' email(s) sélectionné(s)' : '';
-}
-async function _aiAnalysePstSelected() {
-  if (!_aiPstSelected.size) { showToast('⚠️ Sélectionnez au moins un email.'); return; }
-  const selected = _aiPstEmails.filter(m => _aiPstSelected.has(m.id));
-  let combined = '';
-  for (const m of selected) {
-    combined += `\n\n===== EMAIL: ${m.subject} =====\nDe: ${m.senderName} <${m.senderEmail}>\n${m.body || m.bodyPreview}`;
-  }
-  await _aiRunExtraction(combined.trim());
-}
 
 // ─── CORE EXTRACTION (shared) ────────────────────────────────────
 // Version locale : appelle le fournisseur d'IA directement depuis le navigateur (sans backend).
