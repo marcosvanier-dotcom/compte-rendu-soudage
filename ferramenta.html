@@ -1081,50 +1081,50 @@ const I18N = {
     }
   },
   pt: {
-    appTitle:      "📋 Gerador de Relatórios",
-    appSubtitle:   'Preencha os tópicos e clique em "Gerar resumo"',
-    import:        "Importar sessão",
-    exportSession: "Exportar sessão",
-    mergeSession:  "Juntar sessão",
-    histogram:     "Histograma",
-    addSection:    "Nova rubrique",
-    generateBtn:   "📄 Gerar resumo do CR",
-    outputLabel:   "Resumo gerado",
-    copy:          "Copiar",
-    print:         "Imprimir",
-    addItem:       "+ Adicionar item",
-    crTitle:       "CR CÉLULA DE SOLDADURA",
-    ref:           "Ref",
-    date:          "Data",
-    alertEmpty:    "Adicione pelo menos um item antes de gerar.",
-    alertImport:   "Ficheiro inválido ou corrompido.",
-    toastCopied:   "✅ Copiado!",
-    toastImported: "✅ Sessão importada!",
-    toastExported: "✅ Sessão exportada!",
-    metaPlaceholder: "Referência (ex: CR-2026-06)",
-    globalProgress: "Progresso global",
-    histoTitle:    "📊 Histograma — CR Célula de Soldadura",
-    histoSub1:     "Avanço por secção (%)",
-    histoSub2:     "Distribuição dos estados",
-    histoSub3:     "Distribuição das prioridades",
+    appTitle:      "📋 Générateur de Comptes Rendus",
+    appSubtitle:   'Remplissez les rubriques et cliquez sur "Générer le résumé"',
+    import:        "Importer session",
+    exportSession: "Exporter session",
+    mergeSession:  "Fusionner session",
+    histogram:     "Histogramme",
+    addSection:    "Nouvelle rubrique",
+    generateBtn:   "📄 Générer le résumé CR",
+    outputLabel:   "Résumé généré",
+    copy:          "Copier",
+    print:         "Imprimer",
+    addItem:       "+ Ajouter un élément",
+    crTitle:       "CR CELLULE SOUDAGE",
+    ref:           "Réf",
+    date:          "Date",
+    alertEmpty:    "Ajoutez au moins un élément avant de générer.",
+    alertImport:   "Fichier invalide ou corrompu.",
+    toastCopied:   "✅ Copié !",
+    toastImported: "✅ Session importée !",
+    toastExported: "✅ Session exportée !",
+    metaPlaceholder: "Référence (ex: CR-2026-06)",
+    globalProgress: "Progression globale",
+    histoTitle:    "📊 Histogramme — CR Cellule Soudage",
+    histoSub1:     "Avancement par rubrique (%)",
+    histoSub2:     "Répartition des états",
+    histoSub3:     "Répartition des priorités",
     sections: [
-      { id:"priorities", label:"Prioridades",                        emoji:"🔴", cls:"s-priorities" },
-      { id:"chantiers",  label:"Obras / Chantiers",                   emoji:"🏗️", cls:"s-chantiers"  },
-      { id:"rd",         label:"I&D Soldadura",                       emoji:"🔬", cls:"s-rd"         },
-      { id:"formation",  label:"Formação",                            emoji:"🎓", cls:"s-formation"  },
-      { id:"outros",     label:"Outros tópicos",                      emoji:"📌", cls:"s-autres"     },
+      { id:"priorities", label:"Priorités",                      emoji:"🔴", cls:"s-priorities" },
+      { id:"chantiers",  label:"Chantiers",                      emoji:"🏗️", cls:"s-chantiers"  },
+      { id:"rd",         label:"R&D Soudage",                    emoji:"🔬", cls:"s-rd"         },
+      { id:"formation",  label:"Formation",                      emoji:"🎓", cls:"s-formation"  },
+      { id:"outros",     label:"Autres sujets",                  emoji:"📌", cls:"s-autres"     },
     ],
     statuses: {
-      "en-cours":       "🔄 Em curso",
-      "termine":        "✅ Feito",
-      "non-commence":   "❌ Não iniciado",
-      "en-attente":     "⏳ Aguardar",
-      "a-faire":        "📋 A fazer",
+      "en-cours":       "🔄 En cours",
+      "termine":        "✅ Terminé",
+      "non-commence":   "❌ Non commencé",
+      "en-attente":     "⏳ En attente",
+      "a-faire":        "📋 À faire",
     },
     priorities: {
-      "prioritaire":         "⭐ Prioritário",
-      "non-prioritaire":     "— Não prioritário",
-      "attente-validation":  "🔒 Aguarda validação",
+      "prioritaire":         "⭐ Prioritaire",
+      "non-prioritaire":     "— Non prioritaire",
+      "attente-validation":  "🔒 Attente de validation",
     }
   }
 };
@@ -1162,21 +1162,21 @@ function setLang(l) {
   document.getElementById("generate-btn").textContent = t("generateBtn");
   document.getElementById("output-label").textContent = t("outputLabel");
   document.getElementById("meta-ref").placeholder = t("metaPlaceholder");
-  document.getElementById("quick-export-label").textContent = lang==='fr' ? "Export rapide :" : "Exportar :";
+  document.getElementById("quick-export-label").textContent = lang==='fr' ? "Export rapide :" : "Export rapide :";
   const colLabel = document.getElementById("collapse-label");
-  if (colLabel) colLabel.textContent = lang==='fr' ? "Tout réduire" : "Recolher tudo";
+  if (colLabel) colLabel.textContent = lang==='fr' ? "Tout réduire" : "Tout réduire";
   const nsmTitle = document.getElementById("new-section-modal-title");
-  if (nsmTitle) nsmTitle.textContent = lang==='fr' ? "Nouvelle rubrique" : "Nova rubrique";
+  if (nsmTitle) nsmTitle.textContent = lang==='fr' ? "Nouvelle rubrique" : "Nouvelle rubrique";
   const nsmName = document.getElementById("new-section-name-label");
-  if (nsmName) nsmName.textContent = lang==='fr' ? "Nom de la rubrique" : "Nome da rubrique";
+  if (nsmName) nsmName.textContent = lang==='fr' ? "Nom de la rubrique" : "Nom de la rubrique";
   const nsmEmoji = document.getElementById("new-section-emoji-label");
-  if (nsmEmoji) nsmEmoji.textContent = lang==='fr' ? "Choisir un emoji" : "Escolher emoji";
+  if (nsmEmoji) nsmEmoji.textContent = lang==='fr' ? "Choisir un emoji" : "Choisir un emoji";
   document.querySelectorAll("[data-t]").forEach(el => {
     const key = el.getAttribute("data-t");
     if (t(key)) el.textContent = t(key);
   });
   render();
-  // Se o resumo já estiver visível, regenera na nova língua
+  // Si le résumé est déjà visible, le régénérer dans la nouvelle langue
   const outputArea = document.getElementById("output-area");
   if (outputArea.style.display !== "none" && document.getElementById("output-text").innerHTML.trim()) {
     const { html, hasContent } = buildHTMLCR();
@@ -1227,16 +1227,16 @@ function render() {
             <button onclick="event.stopPropagation();resetSectionLabel(${si})" style="background:#fff;border:1px solid #ccc;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:12px;color:#888;">↺</button>
           </span>
           <span class="card-count" style="color:#888;font-weight:400;">(${sec.items.length} item${sec.items.length !== 1 ? 's' : ''})</span>
-          <button onclick="event.stopPropagation();deleteSection(${si})" title="${lang==='fr'?'Supprimer la rubrique':'Apagar rubrique'}" style="background:none;border:none;cursor:pointer;font-size:13px;color:#e53935;padding:0 2px;margin-left:2px;">🗑</button>
+          <button onclick="event.stopPropagation();deleteSection(${si})" title="${lang==='fr'?'Supprimer la rubrique':'Supprimer la rubrique'}" style="background:none;border:none;cursor:pointer;font-size:13px;color:#e53935;padding:0 2px;margin-left:2px;">🗑</button>
         </span>
         <div style="display:flex;align-items:center;gap:6px;">
           <span class="card-pct" style="color:${barColor}">${secPct}%</span>
           <select onchange="sortSection(${si},this.value);this.value=''" onclick="event.stopPropagation()" style="font-size:11px;padding:2px 4px;border:1px solid #ddd;border-radius:4px;color:#888;background:#fff;cursor:pointer;">
             <option value="">⇅</option>
-            <option value="status">${lang==='fr'?'Par état':'Por estado'}</option>
-            <option value="priority">${lang==='fr'?'Par priorité':'Por prioridade'}</option>
-            <option value="pct_asc">${lang==='fr'?'% croissant':'% crescente'}</option>
-            <option value="pct_desc">${lang==='fr'?'% décroissant':'% decrescente'}</option>
+            <option value="status">${lang==='fr'?'Par état':'Par état'}</option>
+            <option value="priority">${lang==='fr'?'Par priorité':'Par priorité'}</option>
+            <option value="pct_asc">${lang==='fr'?'% croissant':'% croissant'}</option>
+            <option value="pct_desc">${lang==='fr'?'% décroissant':'% décroissant'}</option>
             <option value="alpha">${lang==='fr'?'A→Z':'A→Z'}</option>
           </select>
           <button onclick="event.stopPropagation();moveSectionUp(${si})" title="Monter la rubrique" style="background:none;border:1px solid #e0e0e0;border-radius:4px;cursor:pointer;font-size:11px;padding:1px 6px;color:#666;line-height:1.4;" ${si===0?'disabled style="opacity:0.3;cursor:default;"':''}>▲</button>
@@ -1276,7 +1276,7 @@ function render() {
 }
 
 function renderItemHTML(si, ii, item, sec, statuses, priorities) {
-  const commentPlaceholder = lang==='fr'?'Commentaire...':'Comentário...';
+  const commentPlaceholder = lang==='fr'?'Commentaire...':'Commentaire...';
   const daysOpen = (() => {
     if (item.status==='termine'||!item.createdAt) return null;
     return Math.floor((Date.now()-new Date(item.createdAt))/86400000);
@@ -1288,7 +1288,7 @@ function renderItemHTML(si, ii, item, sec, statuses, priorities) {
   const dueDateAlert = (() => {
     if (!item.dueDate||item.status==='termine') return '';
     const diff=Math.floor((parseLocalDate(item.dueDate)-new Date())/86400000);
-    if (diff<0) return `<span style="font-size:10px;color:#fff;background:#c62828;border-radius:10px;padding:1px 7px;">⚠️ ${lang==='fr'?'En retard':'Atrasado'} ${Math.abs(diff)}j</span>`;
+    if (diff<0) return `<span style="font-size:10px;color:#fff;background:#c62828;border-radius:10px;padding:1px 7px;">⚠️ ${lang==='fr'?'En retard':'En retard'} ${Math.abs(diff)}j</span>`;
     if (diff<=2) return `<span style="font-size:10px;color:#fff;background:#e65100;border-radius:10px;padding:1px 7px;">⏰ ${diff}j</span>`;
     return '';
   })();
@@ -1303,7 +1303,7 @@ function renderItemHTML(si, ii, item, sec, statuses, priorities) {
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
         <div class="item-input" contenteditable="true"
           data-si="${si}" data-ii="${ii}" data-field="text"
-          data-placeholder="${lang==='pt'?'Descrição...':'Description...'}"
+          data-placeholder="${lang==='pt'?'Description...':'Description...'}"
           style="flex:1;min-height:32px;line-height:1.5;cursor:text;"
           oninput="updateItem(${si},${ii},'text',this.innerText.replace(/\n/g,' ').trim())"
           onkeydown="if(event.key==='Enter'){event.preventDefault();updateItem(${si},${ii},'text',this.innerText.replace(/\n/g,' ').trim());render();autosave();}"
@@ -1333,12 +1333,12 @@ function renderItemHTML(si, ii, item, sec, statuses, priorities) {
             onkeydown="if(event.key==='Enter'){event.preventDefault();setPct(${si},${ii},this.value);this.value=(state.sections[${si}].items[${ii}].pct??0)+'%';render();showToast('✅ '+( state.sections[${si}].items[${ii}].pct??0)+'% enregistré');}"
             onblur="this.value=(state.sections[${si}].items[${ii}].pct??0)+'%';render();"
             onfocus="this.select();" />
-          ${(item.subrows && item.subrows.length) ? `<button onclick="resetPctAuto(${si},${ii})" title="${item._pctAuto===false?(lang==='fr'?'Recalculer automatiquement (moyenne des responsables)':'Recalcular automaticamente (média dos responsáveis)'):(lang==='fr'?'Calculé automatiquement — cliquez pour resynchroniser':'Calculado automaticamente — clique para ressincronizar')}" style="background:none;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:11px;padding:3px 5px;color:${item._pctAuto===false?'#9fa8da':'#2e7d32'};flex-shrink:0;">🔄</button>` : ''}
+          ${(item.subrows && item.subrows.length) ? `<button onclick="resetPctAuto(${si},${ii})" title="${item._pctAuto===false?(lang==='fr'?'Recalculer automatiquement (moyenne des responsables)':'Recalculer automatiquement (moyenne des responsables)'):(lang==='fr'?'Calculé automatiquement — cliquez pour resynchroniser':'Calculé automatiquement — cliquez pour resynchroniser')}" style="background:none;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:11px;padding:3px 5px;color:${item._pctAuto===false?'#9fa8da':'#2e7d32'};flex-shrink:0;">🔄</button>` : ''}
         </div>
-        <button onclick="removeItem(${si},${ii})" title="${lang==='fr'?'Supprimer':'Eliminar'}" style="background:none;border:none;cursor:pointer;font-size:16px;padding:2px 5px;color:#e57373;line-height:1;flex-shrink:0;">✕</button>
+        <button onclick="removeItem(${si},${ii})" title="${lang==='fr'?'Supprimer':'Supprimer'}" style="background:none;border:none;cursor:pointer;font-size:16px;padding:2px 5px;color:#e57373;line-height:1;flex-shrink:0;">✕</button>
       </div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px;">
-        <input type="text" value="${escHtml(item.responsable||'')}" placeholder="${lang==='fr'?'👤 Responsable...':'👤 Responsável...'}"
+        <input type="text" value="${escHtml(item.responsable||'')}" placeholder="${lang==='fr'?'👤 Responsable...':'👤 Responsable...'}"
           style="flex:1;min-width:100px;padding:5px 8px;font-size:11px;border:1px solid #e0e0e0;border-radius:6px;color:#444;"
           oninput="const v=this.value; updateItem(${si},${ii},'responsable',v)" onblur="const v=this.value.trim(); if(v){this.value=v.charAt(0).toUpperCase()+v.slice(1).toLowerCase(); updateItem(${si},${ii},'responsable',this.value);}" onkeydown="if(event.key==='Enter'){event.preventDefault();const v=this.value.trim();if(v){this.value=v.charAt(0).toUpperCase()+v.slice(1).toLowerCase();updateItem(${si},${ii},'responsable',this.value);}render();autosave();}" />
         <select style="padding:5px 6px;font-size:11px;border:1px solid #e0e0e0;border-radius:6px;color:#444;min-width:110px;"
@@ -1346,7 +1346,7 @@ function renderItemHTML(si, ii, item, sec, statuses, priorities) {
           <option value="">📍 Site...</option>
           ${['SP3C','Golfech','Civaux','Bugey','Nogent','Belleville','Cruas','Tricastin','Saint-Alban','Cattenom','Penly','Paluel','Flamanville','Chooz','Gravelines','Dampierre','Chinon','Blayais','St-Laurent-des-Eaux'].map(s=>`<option value="${s}" ${(item.site||'')=== s?'selected':''}>${s}</option>`).join('')}
         </select>
-        <input type="date" value="${item.dueDate||''}" title="${lang==='fr'?'Date limite':'Data limite'}"
+        <input type="date" value="${item.dueDate||''}" title="${lang==='fr'?'Date limite':'Date limite'}"
           style="padding:5px 6px;font-size:11px;border:1px solid #e0e0e0;border-radius:6px;color:#444;width:130px;"
           onchange="updateItem(${si},${ii},'dueDate',this.value);autosave();updateStats();checkOverdue();" />
         <input type="text" placeholder="N° affaire..."
@@ -1354,14 +1354,14 @@ function renderItemHTML(si, ii, item, sec, statuses, priorities) {
           oninput="updateItem(${si},${ii},'affaire',this.value);autosave();"
           onkeydown="if(event.key==='Enter'){event.preventDefault();updateItem(${si},${ii},'affaire',this.value);autosave();render();showToast('✅ N° affaire enregistré');this.blur();}"
           style="width:110px;padding:5px 8px;font-size:11px;border:1px solid #e0e0e0;border-radius:6px;color:#444;" />
-        <input type="text" placeholder="${lang==='fr'?'🏷 Ajouter tag...':'🏷 Adicionar tag...'}"
+        <input type="text" placeholder="${lang==='fr'?'🏷 Ajouter tag...':'🏷 Ajouter tag...'}"
           style="width:120px;padding:5px 8px;font-size:11px;border:1px solid #e0e0e0;border-radius:6px;color:#444;"
           onkeydown="if(event.key==='Enter'){event.preventDefault();event.stopPropagation();if(this.value.trim()){addTag(${si},${ii},this.value.trim());this.value='';this.focus();}}" />
         ${daysLabel} ${dueDateAlert}
         <div style="display:flex;gap:3px;flex-shrink:0;margin-left:auto;">
           <button onclick="duplicateItemFull(${si},${ii})" title="Dupliquer l'élément complet" style="background:none;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:13px;padding:3px 6px;color:#888;">⧉</button>
           <button onclick="addSubrow(${si},${ii})" title="Ajouter une ligne supplémentaire" style="background:none;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:11px;padding:3px 6px;color:#9fa8da;">+ ≡</button>
-          <button onclick="moveItemPrompt(${si},${ii})" title="${lang==='fr'?'Déplacer vers...':'Mover para...'}" style="background:none;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:13px;padding:3px 6px;color:#888;">↗</button>
+          <button onclick="moveItemPrompt(${si},${ii})" title="${lang==='fr'?'Déplacer vers...':'Déplacer vers...'}" style="background:none;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:13px;padding:3px 6px;color:#888;">↗</button>
           <button onclick="moveItemUp(${si},${ii})" title="↑" style="background:none;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:12px;padding:3px 5px;color:#888;" ${ii===0?'disabled':''}>▲</button>
           <button onclick="moveItemDown(${si},${ii})" title="↓" style="background:none;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:12px;padding:3px 5px;color:#888;" ${ii>=nItems-1?'disabled':''}>▼</button>
         </div>
@@ -1494,7 +1494,7 @@ function resetPctAuto(si, ii) {
   recalcAutoPct(item);
   autosave();
   render();
-  showToast('🔄 ' + (lang==='fr' ? 'Pourcentage recalculé automatiquement' : 'Porcentagem recalculada automaticamente'));
+  showToast('🔄 ' + (lang==='fr' ? 'Pourcentage recalculé automatiquement' : 'Pourcentage recalculé automatiquement'));
 }
 function updateItem(si, ii, field, val) { state.sections[si].items[ii][field] = val; }
 
@@ -1518,7 +1518,7 @@ function updateGlobalProgress() {
   const titleEl = document.getElementById("global-progress-title");
   if (barEl) { barEl.style.width = pct+"%"; barEl.style.background = barColor; }
   if (pctEl) { pctEl.textContent = pct+"%"; pctEl.style.color = barColor; }
-  if (titleEl) titleEl.textContent = (lang==='fr'?'Progression globale':'Progresso global');
+  if (titleEl) titleEl.textContent = (lang==='fr'?'Progression globale':'Progression globale');
 }
 
 // ── META ──────────────────────────────────────────────────────
@@ -1572,7 +1572,7 @@ function buildTextCR() {
   let lines = [], hasContent = false;
   lines.push(customTitle.toUpperCase());
   if (ref)  lines.push(t("ref") + ": " + ref);
-  if (week) lines.push((lang==='fr'?"Semaine":"Semana") + ": " + week);
+  if (week) lines.push((lang==='fr'?"Semaine":"Semaine") + ": " + week);
   lines.push(t("date") + ": " + dateStr);
   lines.push("─".repeat(44));
   state.sections.forEach(sec => {
@@ -1610,7 +1610,7 @@ function buildHTMLCR() {
   let html = `<div style="margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #1a237e;">`;
   html += `<span style="font-weight:700;font-size:14px;color:#1a237e;">📋 ${escHtml(customTitle)}</span><br>`;
   if (ref)  html += `<span style="font-size:12px;color:#555;">${t("ref")}: <strong>${escHtml(ref)}</strong></span>&nbsp;&nbsp;`;
-  if (week) html += `<span style="font-size:12px;color:#555;">${lang==='fr'?'Semaine':'Semana'}: <strong>${week}</strong></span>&nbsp;&nbsp;`;
+  if (week) html += `<span style="font-size:12px;color:#555;">${lang==='fr'?'Semaine':'Semaine'}: <strong>${week}</strong></span>&nbsp;&nbsp;`;
   html += `<span style="font-size:12px;color:#555;">${t("date")}: <strong>${dateStr}</strong></span>`;
   html += `</div>`;
 
@@ -1773,15 +1773,15 @@ function exportWord() {
   <div class="doc-meta">
     ${ref ? `<strong>${t("ref")}:</strong> ${escHtml(ref)} &nbsp;|&nbsp; ` : ''}
     <strong>${t("date")}:</strong> ${dateStr}
-    ${week ? ` &nbsp;|&nbsp; <strong>${lang==='fr'?'Semaine':'Semana'}:</strong> ${week}` : ''}
+    ${week ? ` &nbsp;|&nbsp; <strong>${lang==='fr'?'Semaine':'Semaine'}:</strong> ${week}` : ''}
   </div>
 </div>
 ${sections_html}
 <div class="global-footer">
-  <span class="label">${lang==='fr'?'Progression globale':'Progresso global'}</span>
+  <span class="label">${lang==='fr'?'Progression globale':'Progression globale'}</span>
   <span class="pct" style="color:${gpC};">${gp}%</span>
 </div>
-<div class="gen-date">${lang==='fr'?'Généré le':'Gerado em'} ${new Date().toLocaleString("fr-FR")}</div>
+<div class="gen-date">${lang==='fr'?'Généré le':'Généré le'} ${new Date().toLocaleString("fr-FR")}</div>
 </body></html>`;
   dlFile(html, fileName + ".doc", "application/msword;charset=utf-8");
 }
@@ -1901,18 +1901,18 @@ function exportPDF() {
   <div class="doc-meta">
     ${ref ? `<strong>${t("ref")}:</strong> ${escHtml(ref)} &nbsp;|&nbsp; ` : ''}
     <strong>${t("date")}:</strong> ${dateStr}
-    ${week ? ` &nbsp;|&nbsp; <strong>${lang==='fr'?'Semaine':'Semana'}:</strong> ${week}` : ''}
+    ${week ? ` &nbsp;|&nbsp; <strong>${lang==='fr'?'Semaine':'Semaine'}:</strong> ${week}` : ''}
   </div>
 </div>
 
 ${sections_html}
 
 <div class="global-footer">
-  <span class="label">${lang==='fr'?'Progression globale':'Progresso global'}</span>
+  <span class="label">${lang==='fr'?'Progression globale':'Progression globale'}</span>
   <div class="bar-wrap"><div class="bar-fill" style="width:${gp}%;background:${gpC};"></div></div>
   <span class="pct" style="color:${gpC};">${gp}%</span>
 </div>
-<div class="gen-date">${lang==='fr'?'Généré le':'Gerado em'} ${new Date().toLocaleString("fr-FR")}</div>
+<div class="gen-date">${lang==='fr'?'Généré le':'Généré le'} ${new Date().toLocaleString("fr-FR")}</div>
 
 <script>window.onload=function(){window.print();}<\/script>
 </body></html>`;
@@ -1982,11 +1982,11 @@ function exportExcel() {
 
   const gp  = calcGlobalPct();
   const gpC = gp===100?'#2E7D32':gp>=50?'#1565C0':'#E65100';
-  const colS = lang==='fr'?'État':'Estado';
-  const colP = lang==='fr'?'Priorité':'Prioridade';
-  const colT = lang==='fr'?'Élément':'Item';
-  const colAdv = lang==='fr'?'Avanc.':'Avanço';
-  const colC = lang==='fr'?'Commentaire':'Comentário';
+  const colS = lang==='fr'?'État':'État';
+  const colP = lang==='fr'?'Priorité':'Priorité';
+  const colT = lang==='fr'?'Élément':'Élément';
+  const colAdv = lang==='fr'?'Avanc.':'Avanc.';
+  const colC = lang==='fr'?'Commentaire':'Commentaire';
 
   const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
 <head><meta charset="UTF-8">
@@ -2011,7 +2011,7 @@ function exportExcel() {
     <td colspan="6" style="padding:4px 12px 12px;font-size:9pt;color:#888;border-bottom:1px solid #E8EAF6;">
       ${ref ? `<strong>${t("ref")}:</strong> ${escHtml(ref)} &nbsp;|&nbsp; ` : ''}
       <strong>${t("date")}:</strong> ${dateStr}
-      ${week ? ` &nbsp;|&nbsp; <strong>${lang==='fr'?'Semaine':'Semana'}:</strong> ${week}` : ''}
+      ${week ? ` &nbsp;|&nbsp; <strong>${lang==='fr'?'Semaine':'Semaine'}:</strong> ${week}` : ''}
     </td>
   </tr>
   <tr style="background:#F5F7FF;">
@@ -2026,7 +2026,7 @@ function exportExcel() {
   <tr><td colspan="6" style="height:10px;"></td></tr>
   <tr>
     <td colspan="3" style="padding:8px 12px;background:#F5F7FF;font-weight:700;font-size:10pt;color:#1A237E;border-top:2px solid #E8EAF6;">
-      ${lang==='fr'?'Progression globale':'Progresso global'}
+      ${lang==='fr'?'Progression globale':'Progression globale'}
     </td>
     <td style="padding:8px 10px;background:#F5F7FF;font-weight:700;font-size:12pt;color:${gpC};text-align:center;border-top:2px solid #E8EAF6;">
       ${gp}%
@@ -2035,7 +2035,7 @@ function exportExcel() {
   </tr>
   <tr>
     <td colspan="6" style="padding:6px 12px;font-size:7.5pt;color:#bbb;text-align:right;">
-      ${lang==='fr'?'Généré le':'Gerado em'} ${new Date().toLocaleString("fr-FR")}
+      ${lang==='fr'?'Généré le':'Généré le'} ${new Date().toLocaleString("fr-FR")}
     </td>
   </tr>
 </table>
@@ -2057,11 +2057,11 @@ function openHistogram() {
   document.getElementById("histo-sub1").textContent  = t("histoSub1");
   document.getElementById("histo-sub2").textContent  = t("histoSub2");
   document.getElementById("histo-sub3").textContent  = t("histoSub3");
-  document.getElementById("histo-export-label").textContent = lang==='fr' ? "Exporter :" : "Exportar :";
-  document.getElementById("chk-lbl-sections").textContent   = lang==='fr' ? "Avancement" : "Avanço";
-  document.getElementById("chk-lbl-status").textContent     = lang==='fr' ? "États" : "Estados";
-  document.getElementById("chk-lbl-priority").textContent   = lang==='fr' ? "Priorités" : "Prioridades";
-  document.getElementById("histo-print-label").textContent  = lang==='fr' ? "Imprimer" : "Imprimir";
+  document.getElementById("histo-export-label").textContent = lang==='fr' ? "Exporter :" : "Exporter :";
+  document.getElementById("chk-lbl-sections").textContent   = lang==='fr' ? "Avancement" : "Avancement";
+  document.getElementById("chk-lbl-status").textContent     = lang==='fr' ? "États" : "États";
+  document.getElementById("chk-lbl-priority").textContent   = lang==='fr' ? "Priorités" : "Priorités";
+  document.getElementById("histo-print-label").textContent  = lang==='fr' ? "Imprimer" : "Imprimer";
   modal.classList.add("open");
 
   // Destroy old charts
@@ -2179,8 +2179,8 @@ function getSelectedCharts() {
 
 function exportHistoPNG() {
   const selected = getSelectedCharts();
-  if (!selected.length) { alert(lang==='fr'?"Sélectionnez au moins un graphique.":"Selecione pelo menos um gráfico."); return; }
-  if (!chartSections) { alert(lang==='fr'?"Ouvrez d'abord l'histogramme.":"Abra primeiro o histograma."); return; }
+  if (!selected.length) { alert(lang==='fr'?"Sélectionnez au moins un graphique.":"Sélectionnez au moins un graphique."); return; }
+  if (!chartSections) { alert(lang==='fr'?"Ouvrez d'abord l'histogramme.":"Ouvrez d'abord l'histogramme."); return; }
   setTimeout(() => {
     const { fileName } = getMetaInfo();
     if (selected.length === 1) {
@@ -2223,8 +2223,8 @@ function exportHistoPNG() {
 
 function exportHistoPDF() {
   const selected = getSelectedCharts();
-  if (!selected.length) { alert(lang==='fr'?"Sélectionnez au moins un graphique.":"Selecione pelo menos um gráfico."); return; }
-  if (!chartSections) { alert(lang==='fr'?"Ouvrez d'abord l'histogramme.":"Abra primeiro o histograma."); return; }
+  if (!selected.length) { alert(lang==='fr'?"Sélectionnez au moins un graphique.":"Sélectionnez au moins un graphique."); return; }
+  if (!chartSections) { alert(lang==='fr'?"Ouvrez d'abord l'histogramme.":"Ouvrez d'abord l'histogramme."); return; }
   setTimeout(() => {
     const { dateStr, ref } = getMetaInfo();
     let imgs = "";
@@ -2243,7 +2243,7 @@ function exportHistoPDF() {
 <h1>${t("histoTitle")}</h1>
 <div class="meta">${ref ? t("ref")+': '+ref+' &nbsp;|&nbsp; ' : ''}${t("date")}: ${dateStr}</div>
 ${imgs}
-<p style="font-size:11px;color:#aaa;margin-top:12px;">${lang==='fr'?'Généré le':'Gerado em'} ${new Date().toLocaleString("fr-FR")}</p>
+<p style="font-size:11px;color:#aaa;margin-top:12px;">${lang==='fr'?'Généré le':'Généré le'} ${new Date().toLocaleString("fr-FR")}</p>
 <script>window.onload=function(){window.print();}<\/script>
 </body></html>`;
     const w = window.open("","_blank");
@@ -2254,8 +2254,8 @@ ${imgs}
 
 function printHistogram() {
   const selected = getSelectedCharts();
-  if (!selected.length) { alert(lang==='fr'?"Sélectionnez au moins un graphique.":"Selecione pelo menos um gráfico."); return; }
-  if (!chartSections) { alert(lang==='fr'?"Ouvrez d'abord l'histogramme.":"Abra primeiro o histograma."); return; }
+  if (!selected.length) { alert(lang==='fr'?"Sélectionnez au moins un graphique.":"Sélectionnez au moins un graphique."); return; }
+  if (!chartSections) { alert(lang==='fr'?"Ouvrez d'abord l'histogramme.":"Ouvrez d'abord l'histogramme."); return; }
   setTimeout(() => {
     const { dateStr, ref } = getMetaInfo();
     let imgs = "";
@@ -2274,7 +2274,7 @@ function printHistogram() {
 <h1>${t("histoTitle")}</h1>
 <div class="meta">${ref ? t("ref")+': '+ref+' &nbsp;|&nbsp; ' : ''}${t("date")}: ${dateStr}</div>
 ${imgs}
-<p style="font-size:11px;color:#aaa;margin-top:12px;">${lang==='fr'?'Généré le':'Gerado em'} ${new Date().toLocaleString("fr-FR")}</p>
+<p style="font-size:11px;color:#aaa;margin-top:12px;">${lang==='fr'?'Généré le':'Généré le'} ${new Date().toLocaleString("fr-FR")}</p>
 <script>window.onload=function(){window.print();}<\/script>
 </body></html>`;
     const w = window.open("","_blank");
@@ -2287,7 +2287,7 @@ function deleteSection(si) {
   const sec = state.sections[si];
   const msg = lang==='fr'
     ? `Supprimer la rubrique "${sec.label}" et tous ses éléments ?`
-    : `Apagar a rubrique "${sec.label}" e todos os seus itens?`;
+    : `Supprimer la rubrique "${sec.label}" et tous ses éléments ?`;
   if (!confirm(msg)) return;
   state.sections.splice(si, 1);
   render();
@@ -2302,11 +2302,11 @@ function toggleAllSections() {
   if (!allCollapsed) {
     btn.textContent   = "";
     btn.appendChild(document.createTextNode("▲ "));
-    label.textContent = lang==='fr' ? "Tout déplier" : "Expandir tudo";
+    label.textContent = lang==='fr' ? "Tout déplier" : "Tout déplier";
     btn.prepend(document.createTextNode(""));
-    btn.innerHTML = `▲ <span id="collapse-label">${lang==='fr'?'Tout déplier':'Expandir tudo'}</span>`;
+    btn.innerHTML = `▲ <span id="collapse-label">${lang==='fr'?'Tout déplier':'Tout déplier'}</span>`;
   } else {
-    btn.innerHTML = `▼ <span id="collapse-label">${lang==='fr'?'Tout réduire':'Recolher tudo'}</span>`;
+    btn.innerHTML = `▼ <span id="collapse-label">${lang==='fr'?'Tout réduire':'Tout réduire'}</span>`;
   }
   render();
 }
@@ -2765,7 +2765,7 @@ function updateStats() {
 
   let html = `<span class="stat-chip" onclick="toggleAdvancedFilter()" id="chip-tous"
     style="font-weight:700;border-color:#1a237e;color:#1a237e;background:#f5f7ff;">
-    ▼ ${lang==='fr'?'Filtres':'Filtros'}: <strong>${total}</strong>
+    ▼ ${lang==='fr'?'Filtres':'Filtres'}: <strong>${total}</strong>
   </span>`;
 
   // Separator
@@ -2776,7 +2776,7 @@ function updateStats() {
     .filter(([k,v]) => v > 0)
     .map(([k,v]) => {
       const label = (statuses[k]||k).replace(/^[^\w\s]+\s*/,'');
-      return `<span class="stat-chip" onclick="filterByStatus('${k}')" title="${lang==='fr'?'Filtrer par état':'Filtrar por estado'}">
+      return `<span class="stat-chip" onclick="filterByStatus('${k}')" title="${lang==='fr'?'Filtrer par état':'Filtrer par état'}">
         <span style="width:7px;height:7px;border-radius:50%;background:${STATUS_DOT[k]||'#888'};display:inline-block;flex-shrink:0;"></span>
         ${label}: <strong>${v}</strong>
       </span>`;
@@ -2788,7 +2788,7 @@ function updateStats() {
     .filter(([k,v]) => v > 0)
     .map(([k,v]) => {
       const label = (priorities[k]||k).replace(/^[^\w\s]+\s*/,'');
-      return `<span class="stat-chip" onclick="filterByStatus('prio__${k}')" title="${lang==='fr'?'Filtrer par priorité':'Filtrar por prioridade'}">
+      return `<span class="stat-chip" onclick="filterByStatus('prio__${k}')" title="${lang==='fr'?'Filtrer par priorité':'Filtrer par priorité'}">
         <span style="width:7px;height:7px;border-radius:50%;background:${PRIO_DOT[k]||'#888'};display:inline-block;flex-shrink:0;"></span>
         ${label}: <strong>${v}</strong>
       </span>`;
@@ -2797,7 +2797,7 @@ function updateStats() {
 
   // Responsable chips
   let respHtml = Object.entries(respMap).map(([r,v]) =>
-    `<span class="stat-chip" onclick="filterByResponsable('${escHtml(r)}')" title="${lang==='fr'?'Filtrer par responsable':'Filtrar por responsável'}">
+    `<span class="stat-chip" onclick="filterByResponsable('${escHtml(r)}')" title="${lang==='fr'?'Filtrer par responsable':'Filtrer par responsable'}">
       👤 ${escHtml(r)}: <strong>${v}</strong>
     </span>`
   ).join('');
@@ -2822,7 +2822,7 @@ function updateStats() {
     html += sep + `<span class="stat-chip" onclick="filterByStatus('overdue')"
       style="background:#ffebee;border-color:#ef9a9a;color:#b71c1c;">
       <span style="width:7px;height:7px;border-radius:50%;background:#b71c1c;display:inline-block;flex-shrink:0;"></span>
-      ${lang==='fr'?'En retard':'Atrasados'}: <strong>${overdueCount}</strong>
+      ${lang==='fr'?'En retard':'En retard'}: <strong>${overdueCount}</strong>
     </span>`;
   }
 
@@ -2933,7 +2933,7 @@ function toggleAdvancedFilter() {
   const panel = document.getElementById("advanced-filter-panel");
   panel.style.display = advFilterOpen ? "block" : "none";
   const btn = document.getElementById("chip-tous");
-  if (btn) btn.innerHTML = `${advFilterOpen?'▲':'▼'} ${lang==='fr'?'Filtres':'Filtros'}: <strong>${document.querySelectorAll('.item-row').length||''}</strong>`;
+  if (btn) btn.innerHTML = `${advFilterOpen?'▲':'▼'} ${lang==='fr'?'Filtres':'Filtres'}: <strong>${document.querySelectorAll('.item-row').length||''}</strong>`;
 
   if (advFilterOpen) {
     // Populate checkboxes
@@ -2941,19 +2941,19 @@ function toggleAdvancedFilter() {
     const priorities = t("priorities");
 
     // Update labels
-    document.getElementById("adv-lbl-status").textContent    = lang==='fr'?'État':'Estado';
-    document.getElementById("adv-lbl-priority").textContent  = lang==='fr'?'Priorité':'Prioridade';
+    document.getElementById("adv-lbl-status").textContent    = lang==='fr'?'État':'État';
+    document.getElementById("adv-lbl-priority").textContent  = lang==='fr'?'Priorité':'Priorité';
     document.getElementById("adv-lbl-section").textContent   = lang==='fr'?'Rubrique':'Rubrique';
-    document.getElementById("adv-lbl-other").textContent     = lang==='fr'?'Autres':'Outros';
-    document.getElementById("adv-lbl-overdue").textContent   = lang==='fr'?'En retard':'Atrasados';
-    document.getElementById("adv-lbl-comment").textContent   = lang==='fr'?'Avec commentaire':'Com comentário';
-    document.getElementById("adv-lbl-resp").textContent      = lang==='fr'?'Avec responsable':'Com responsável';
+    document.getElementById("adv-lbl-other").textContent     = lang==='fr'?'Autres':'Autres';
+    document.getElementById("adv-lbl-overdue").textContent   = lang==='fr'?'En retard':'En retard';
+    document.getElementById("adv-lbl-comment").textContent   = lang==='fr'?'Avec commentaire':'Avec commentaire';
+    document.getElementById("adv-lbl-resp").textContent      = lang==='fr'?'Avec responsable':'Avec responsable';
     document.getElementById("adv-lbl-pct0").textContent      = '% = 0';
-    document.getElementById("adv-apply-btn").textContent     = lang==='fr'?'Appliquer':'Aplicar';
-    document.getElementById("adv-reset-btn").textContent     = lang==='fr'?'↺ Réinitialiser':'↺ Reiniciar';
-    document.getElementById("adv-filter-title").textContent  = lang==='fr'?'Filtres avancés':'Filtros avançados';
+    document.getElementById("adv-apply-btn").textContent     = lang==='fr'?'Appliquer':'Appliquer';
+    document.getElementById("adv-reset-btn").textContent     = lang==='fr'?'↺ Réinitialiser':'↺ Réinitialiser';
+    document.getElementById("adv-filter-title").textContent  = lang==='fr'?'Filtres avancés':'Filtres avancés';
     document.getElementById("adv-tag-filter").placeholder    = lang==='fr'?'🏷 Tag...':'🏷 Tag...';
-    document.getElementById("adv-resp-filter").placeholder   = lang==='fr'?'👤 Responsable...':'👤 Responsável...';
+    document.getElementById("adv-resp-filter").placeholder   = lang==='fr'?'👤 Responsable...':'👤 Responsable...';
 
     // Status checkboxes
     const stCont = document.getElementById("adv-status-checks");
@@ -3004,7 +3004,7 @@ function applyAdvancedFilter() {
 
   const SEC_FG_MAP = {"s-priorities":"#1A237E","s-repairs":"#1A237E","s-chantiers":"#1A237E","s-rd":"#1A237E","s-formation":"#1A237E","s-autres":"#1A237E"};
   const SEC_BG_MAP = {"s-priorities":"#E8EAF6","s-repairs":"#E8EAF6","s-chantiers":"#E8EAF6","s-rd":"#E8EAF6","s-formation":"#E8EAF6","s-autres":"#E8EAF6"};
-  const commentPlaceholder = lang==='fr'?'Commentaire...':'Comentário...';
+  const commentPlaceholder = lang==='fr'?'Commentaire...':'Commentaire...';
 
   state.sections.forEach((sec, si) => {
     if (!selectedSections.includes(si)) return;
@@ -3070,7 +3070,7 @@ function applyAdvancedFilter() {
   updateGlobalProgress();
   updateStats();
   setTimeout(checkOverdue, 100);
-  showToast(lang==='fr'?'🔎 Filtres appliqués':'🔎 Filtros aplicados');
+  showToast(lang==='fr'?'🔎 Filtres appliqués':'🔎 Filtres appliqués');
 }
 
 function resetAdvancedFilter() {
@@ -3231,7 +3231,7 @@ function renderWithFilter(query, statusFilter, chipKey) {
             <button onclick="event.stopPropagation();resetSectionLabel(${si})" style="background:#fff;border:1px solid #ccc;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:12px;color:#888;">↺</button>
           </span>
           <span class="card-count" style="color:#888;font-weight:400;">(${items.length}/${sec.items.length} item${sec.items.length!==1?'s':''})</span>
-          <button onclick="event.stopPropagation();deleteSection(${si})" title="${lang==='fr'?'Supprimer':'Apagar'}" style="background:none;border:none;cursor:pointer;font-size:13px;color:#e53935;padding:0 2px;margin-left:2px;">🗑</button>
+          <button onclick="event.stopPropagation();deleteSection(${si})" title="${lang==='fr'?'Supprimer':'Supprimer'}" style="background:none;border:none;cursor:pointer;font-size:13px;color:#e53935;padding:0 2px;margin-left:2px;">🗑</button>
         </span>
         <div style="display:flex;align-items:center;gap:8px;">
           <span class="card-pct" style="color:${barColor}">${secPct}%</span>
@@ -3247,7 +3247,7 @@ function renderWithFilter(query, statusFilter, chipKey) {
     const body = document.createElement("div");
     body.className = "card-body" + (isCollapsed ? " hidden" : "");
 
-    const commentPlaceholder = lang==='fr'?'Commentaire...':'Comentário...';
+    const commentPlaceholder = lang==='fr'?'Commentaire...':'Commentaire...';
     items.forEach((item, ii) => {
       const realIdx = sec.items.indexOf(item);
       const row = document.createElement("div");
@@ -3339,7 +3339,7 @@ function moveItemPrompt(si, ii) {
   const modal = document.getElementById('move-modal');
   const sel   = document.getElementById('move-select');
   const title = document.getElementById('move-modal-title');
-  title.textContent = lang==='fr' ? 'Déplacer vers :' : 'Mover para :';
+  title.textContent = lang==='fr' ? 'Déplacer vers :' : 'Déplacer vers :';
   sel.innerHTML = opts;
   modal.style.display = 'flex';
   modal.dataset.si = si;
@@ -3359,7 +3359,7 @@ function confirmMoveItem() {
   collapsed[state.sections[target].id] = false;
   render();
   autosave();
-  showToast((lang==='fr'?'↗ Déplacé vers ':'↗ Movido para ') + state.sections[target].emoji + ' ' + state.sections[target].label);
+  showToast((lang==='fr'?'↗ Déplacé vers ':'↗ Déplacé vers ') + state.sections[target].emoji + ' ' + state.sections[target].label);
 }
 
 function closeMoveModal() {
@@ -3415,7 +3415,7 @@ function undo() {
   redoStack.push(JSON.stringify(state.sections));
   state.sections = JSON.parse(undoStack.pop());
   render();
-  showToast(lang==='fr'?'↩ Annulé':'↩ Desfeito');
+  showToast(lang==='fr'?'↩ Annulé':'↩ Annulé');
 }
 
 function redo() {
@@ -3423,7 +3423,7 @@ function redo() {
   undoStack.push(JSON.stringify(state.sections));
   state.sections = JSON.parse(redoStack.pop());
   render();
-  showToast(lang==='fr'?'↪ Rétabli':'↪ Refeito');
+  showToast(lang==='fr'?'↪ Rétabli':'↪ Rétabli');
 }
 
 document.addEventListener('keydown', e => {
@@ -3516,7 +3516,7 @@ function buildArchiveHTML(forExport) {
   let rows = "";
   Object.entries(groups).reverse().forEach(([date, items]) => {
     rows += `<tr><td colspan="6" style="background:#F5F7FF;font-weight:700;font-size:11pt;padding:8px 12px;border-top:2px solid #1A237E;color:#1A237E;">
-      📅 ${date} — ${items.length} ${lang==='fr'?'élément(s)':'item(s)'}
+      📅 ${date} — ${items.length} ${lang==='fr'?'élément(s)':'élément(s)'}
     </td></tr>`;
     items.forEach((item, idx) => {
       const st = STATUS_BADGE[item.status]||{bg:"#f5f5f5",color:"#333"};
@@ -3550,11 +3550,11 @@ function buildArchiveHTML(forExport) {
 
   const colLabels = lang==='fr'
     ? ['Élément','Rubrique','État','Priorité','%','Responsable / Date']
-    : ['Item','Rubrique','Estado','Prioridade','%','Responsável / Data'];
+    : ['Élément','Rubrique','État','Priorité','%','Responsable / Date'];
 
   return `
   <div class="doc-header">
-    <div class="doc-title">✅ ${lang==='fr'?'Terminés archivés':'Terminados arquivados'} — ${escHtml(customTitle)}</div>
+    <div class="doc-title">✅ ${lang==='fr'?'Terminés archivés':'Terminés archivés'} — ${escHtml(customTitle)}</div>
     <div class="doc-meta"><strong>${t("date")}:</strong> ${dateStr} &nbsp;|&nbsp; <strong>Total:</strong> ${arr.length}</div>
   </div>
   <table>
@@ -3563,7 +3563,7 @@ function buildArchiveHTML(forExport) {
     </tr>
     ${rows}
   </table>
-  <div class="gen-date">${lang==='fr'?'Généré le':'Gerado em'} ${new Date().toLocaleString("fr-FR")}</div>`;
+  <div class="gen-date">${lang==='fr'?'Généré le':'Généré le'} ${new Date().toLocaleString("fr-FR")}</div>`;
 }
 
 const archiveCSS = `
@@ -3651,10 +3651,10 @@ async function openArchive() {
   const modal = document.getElementById("archive-modal");
   const list  = document.getElementById("archive-list");
   const title = document.getElementById("archive-modal-title");
-  title.textContent = lang==='fr' ? `✅ Terminés archivés (${arr.length})` : `✅ Terminados arquivados (${arr.length})`;
+  title.textContent = lang==='fr' ? `✅ Terminés archivés (${arr.length})` : `✅ Terminés archivés (${arr.length})`;
 
   if (!arr.length) {
-    list.innerHTML = `<p style="color:#aaa;text-align:center;padding:24px;">${lang==='fr'?'Aucun élément archivé':'Nenhum item arquivado'}</p>`;
+    list.innerHTML = `<p style="color:#aaa;text-align:center;padding:24px;">${lang==='fr'?'Aucun élément archivé':'Aucun élément archivé'}</p>`;
   } else {
     // Group by archivedAt date
     const groups = {};
@@ -3667,7 +3667,7 @@ async function openArchive() {
     list.innerHTML = Object.entries(groups).reverse().map(([date, entries]) => `
       <div style="margin-bottom:16px;">
         <div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #f0f0f0;">
-          📅 ${date} — ${entries.length} ${lang==='fr'?'élément(s)':'item(s)'}
+          📅 ${date} — ${entries.length} ${lang==='fr'?'élément(s)':'élément(s)'}
         </div>
         ${entries.map(({item,idx}) => {
           const STATUS_C = {"en-cours":"#1565c0","termine":"#2e7d32","non-commence":"#c62828","en-attente":"#6a1b9a","a-faire":"#f57c00"};
@@ -3686,9 +3686,9 @@ async function openArchive() {
               ${item.comment?`<div style="font-size:11px;color:#aaa;font-style:italic;margin-top:2px;">💬 ${escHtml(item.comment)}</div>`:''}
             </div>
             <div style="display:flex;gap:5px;flex-shrink:0;">
-              <button onclick="restoreArchiveItem(${idx})" title="${lang==='fr'?'Restaurer':'Restaurar'}"
-                style="padding:4px 10px;font-size:11px;background:#e8f5e9;border:1px solid #81c784;color:#2e7d32;border-radius:6px;cursor:pointer;">↩ ${lang==='fr'?'Restaurer':'Restaurar'}</button>
-              <button onclick="deleteArchiveItem(${idx})" title="${lang==='fr'?'Supprimer':'Apagar'}"
+              <button onclick="restoreArchiveItem(${idx})" title="${lang==='fr'?'Restaurer':'Restaurer'}"
+                style="padding:4px 10px;font-size:11px;background:#e8f5e9;border:1px solid #81c784;color:#2e7d32;border-radius:6px;cursor:pointer;">↩ ${lang==='fr'?'Restaurer':'Restaurer'}</button>
+              <button onclick="deleteArchiveItem(${idx})" title="${lang==='fr'?'Supprimer':'Supprimer'}"
                 style="padding:4px 10px;font-size:11px;background:#ffebee;border:1px solid #ef9a9a;color:#c62828;border-radius:6px;cursor:pointer;">🗑</button>
             </div>
           </div>`;
@@ -3726,14 +3726,14 @@ async function restoreArchiveItem(idx) {
   if (fellBack) {
     showToast((lang==='fr'
       ? `⚠️ Rubrique d'origine introuvable — restauré dans "${sec.label}"`
-      : `⚠️ Rubrica de origem não encontrada — restaurado em "${sec.label}"`));
+      : `⚠️ Rubrique d'origine introuvable — restauré dans "${sec.label}"`));
   } else {
-    showToast((lang==='fr'?`↩ Restauré dans "${sec.label}"`:`↩ Restaurado em "${sec.label}"`));
+    showToast((lang==='fr'?`↩ Restauré dans "${sec.label}"`:`↩ Restauré dans "${sec.label}"`));
   }
 }
 
 async function deleteArchiveItem(idx) {
-  if (!confirm(lang==='fr'?'Supprimer définitivement cet élément ?':'Apagar definitivamente este item?')) return;
+  if (!confirm(lang==='fr'?'Supprimer définitivement cet élément ?':'Supprimer définitivement cet élément ?')) return;
   const id = _archiveIds[idx];
   if (id) await apiFetch('/api/archive/' + id, { method:'DELETE' }).catch(()=>{});
   const arr = loadArchive();
@@ -3743,11 +3743,11 @@ async function deleteArchiveItem(idx) {
 }
 
 async function clearAllArchive() {
-  if (!confirm(lang==='fr'?'Vider tout l\'archive ?':'Esvaziar todo o arquivo?')) return;
+  if (!confirm(lang==='fr'?'Vider tout l\'archive ?':'Vider tout l\'archive ?')) return;
   await Promise.all(_archiveIds.map(id => apiFetch('/api/archive/' + id, { method:'DELETE' }).catch(()=>{})));
   saveArchive([]);
   openArchive();
-  showToast(lang==='fr'?'🗑 Archive vidée':'🗑 Arquivo esvaziado');
+  showToast(lang==='fr'?'🗑 Archive vidée':'🗑 Archive vidée');
 }
 
 function closeResume() {
@@ -3783,11 +3783,11 @@ function printResume() {
   <div class="doc-meta">
     ${ref ? `<strong>${t("ref")}:</strong> ${escHtml(ref)} &nbsp;|&nbsp; ` : ''}
     <strong>${t("date")}:</strong> ${dateStr}
-    ${week ? ` &nbsp;|&nbsp; <strong>${lang==='fr'?'Semaine':'Semana'}:</strong> ${week}` : ''}
+    ${week ? ` &nbsp;|&nbsp; <strong>${lang==='fr'?'Semaine':'Semaine'}:</strong> ${week}` : ''}
   </div>
 </div>
 <div class="content">${el.innerHTML}</div>
-<div class="gen-date">${lang==='fr'?'Généré le':'Gerado em'} ${new Date().toLocaleString("fr-FR")}</div>
+<div class="gen-date">${lang==='fr'?'Généré le':'Généré le'} ${new Date().toLocaleString("fr-FR")}</div>
 <script>window.onload=function(){window.print();}<\/script>
 </body></html>`;
 
@@ -4602,7 +4602,7 @@ function addCurrentSession() {
   const done     = allItems.filter(i => i.status==='termine').length;
   const gp       = calcGlobalPct();
   const gpC      = gp===100?'#2e7d32':gp>=50?'#1565c0':'#f57c00';
-  const label    = customTitle || (lang==='fr'?'Session active':'Sessão ativa');
+  const label    = customTitle || (lang==='fr'?'Session active':'Session active');
 
   // Store session data on the element for runCompare to pick up
   div.dataset.sessionData = JSON.stringify(session);
@@ -5590,11 +5590,11 @@ const KANBAN_COLS = {
     { id:"termine",       label:"Terminé",       icon:"✅", statuses:["termine"],        bg:"#e8f5e9", fg:"#2e7d32", countBg:"#2e7d32" },
   ],
   pt: [
-    { id:"a-faire",       label:"A fazer",        icon:"📋", statuses:["a-faire"],       bg:"#fff8e1", fg:"#f57c00", countBg:"#f57c00" },
-    { id:"en-cours",      label:"Em curso",       icon:"🔄", statuses:["en-cours"],      bg:"#e3f2fd", fg:"#1565c0", countBg:"#1565c0" },
-    { id:"non-commence",  label:"Não iniciado",   icon:"❌", statuses:["non-commence"],  bg:"#ffebee", fg:"#c62828", countBg:"#c62828" },
-    { id:"attente",       label:"Em espera",      icon:"⏳", statuses:["en-attente"],    bg:"#f3e5f5", fg:"#6a1b9a", countBg:"#6a1b9a" },
-    { id:"termine",       label:"Terminado",      icon:"✅", statuses:["termine"],       bg:"#e8f5e9", fg:"#2e7d32", countBg:"#2e7d32" },
+    { id:"a-faire",       label:"À faire",       icon:"📋", statuses:["a-faire"],        bg:"#fff8e1", fg:"#f57c00", countBg:"#f57c00" },
+    { id:"en-cours",      label:"En cours",      icon:"🔄", statuses:["en-cours"],       bg:"#e3f2fd", fg:"#1565c0", countBg:"#1565c0" },
+    { id:"non-commence",  label:"Non commencé",  icon:"❌", statuses:["non-commence"],   bg:"#ffebee", fg:"#c62828", countBg:"#c62828" },
+    { id:"attente",       label:"En attente",    icon:"⏳", statuses:["en-attente"],     bg:"#f3e5f5", fg:"#6a1b9a", countBg:"#6a1b9a" },
+    { id:"termine",       label:"Terminé",       icon:"✅", statuses:["termine"],        bg:"#e8f5e9", fg:"#2e7d32", countBg:"#2e7d32" },
   ]
 };
 
@@ -5605,9 +5605,9 @@ const KANBAN_PRIO_COLS = {
     { id:"non-prioritaire",    label:"Non prioritaire",      icon:"—",  priority:"non-prioritaire",    bg:"#f5f5f5", fg:"#555",    countBg:"#888"    },
   ],
   pt: [
-    { id:"prioritaire",        label:"Prioritário",          icon:"⭐", priority:"prioritaire",        bg:"#ffebee", fg:"#b71c1c", countBg:"#b71c1c" },
-    { id:"attente-validation", label:"Aguarda validação",    icon:"🔒", priority:"attente-validation", bg:"#e3f2fd", fg:"#0d47a1", countBg:"#0d47a1" },
-    { id:"non-prioritaire",    label:"Não prioritário",      icon:"—",  priority:"non-prioritaire",    bg:"#f5f5f5", fg:"#555",    countBg:"#888"    },
+    { id:"prioritaire",        label:"Prioritaire",          icon:"⭐", priority:"prioritaire",        bg:"#ffebee", fg:"#b71c1c", countBg:"#b71c1c" },
+    { id:"attente-validation", label:"Attente de validation",icon:"🔒", priority:"attente-validation", bg:"#e3f2fd", fg:"#0d47a1", countBg:"#0d47a1" },
+    { id:"non-prioritaire",    label:"Non prioritaire",      icon:"—",  priority:"non-prioritaire",    bg:"#f5f5f5", fg:"#555",    countBg:"#888"    },
   ]
 };
 
@@ -5674,7 +5674,7 @@ function renderKanban() {
     `;
 
     if (!items.length) {
-      colEl.innerHTML += `<div class="kanban-empty">${lang==='fr'?'Aucun sujet':'Sem itens'}</div>`;
+      colEl.innerHTML += `<div class="kanban-empty">${lang==='fr'?'Aucun sujet':'Aucun sujet'}</div>`;
     } else {
       items.forEach(item => {
         const prio = PRIO_STYLE[item.priority] || PRIO_STYLE["non-prioritaire"];
@@ -5874,7 +5874,7 @@ function exportSessionPortable() {
     `<script>window.__CR_PRELOAD__ = ${sessionData};<\/script></head>`
   );
   dlFile(injected, "👉 Générateur CR Cellule Soudage V1.1.html", "text/html;charset=utf-8");
-  showToast(lang==='fr'?'✅ HTML portable exporté!':'✅ HTML portátil exportado!');
+  showToast(lang==='fr'?'✅ HTML portable exporté!':'✅ HTML portable exporté!');
 }
 
 function importSession(event) {
@@ -5950,7 +5950,7 @@ function mergeSession(event) {
       render();
       const msg = lang === 'fr'
         ? `✅ ${added} élément(s) ajouté(s) à la session en cours.`
-        : `✅ ${added} item(s) adicionado(s) à sessão atual.`;
+        : `✅ ${added} élément(s) ajouté(s) à la session en cours.`;
       showToast(msg);
     } catch { alert(t("alertImport")); }
     event.target.value = "";
@@ -5988,7 +5988,7 @@ function autosave() {
 function showSaveIndicator() {
   const el = document.getElementById("save-indicator");
   const now = new Date().toLocaleTimeString("fr-FR", { hour:"2-digit", minute:"2-digit", second:"2-digit" });
-  el.textContent = (lang === 'fr' ? "💾 Sauvegardé à " : "💾 Salvo às ") + now;
+  el.textContent = (lang === 'fr' ? "💾 Sauvegardé à " : "💾 Sauvegardé à ") + now;
   el.style.opacity = "1";
   setTimeout(() => { el.style.opacity = "0"; }, 3000);
 }
@@ -6075,7 +6075,7 @@ function applySessionToApp(session) {
 }
 
 function clearAutosave() {
-  if (confirm(lang === 'fr' ? "Effacer la sauvegarde automatique et réinitialiser ?" : "Apagar a gravação automática e reiniciar?")) {
+  if (confirm(lang === 'fr' ? "Effacer la sauvegarde automatique et réinitialiser ?" : "Effacer la sauvegarde automatique et réinitialiser ?")) {
     try { localStorage.removeItem(AUTOSAVE_KEY); } catch(e) {}
     lang = "fr";
     state = { sections: buildSections("fr") };
@@ -6174,16 +6174,16 @@ if (window.__CR_PRELOAD__) {
     document.querySelectorAll("[data-t]").forEach(el => { const k=el.getAttribute("data-t"); if(t(k)) el.textContent=t(k); });
     updateWeekDisplay();
     render();
-    showToast(lang==='fr'?'🔁 Session restaurée depuis fichier portable':'🔁 Sessão restaurada do ficheiro portátil');
+    showToast(lang==='fr'?'🔁 Session restaurée depuis fichier portable':'🔁 Session restaurée depuis fichier portable');
     window.__CR_PRELOAD__ = null; // clear after restore
   } catch(e) { console.warn("Preload failed", e); }
 }
 
 // ═══════════════════════════════════════════════════════════════
-// 🔌 VERSÃO LOCAL — SEM BACKEND, SEM LOGIN
-// Tudo fica só no localStorage deste navegador. apiFetch é um stub
-// que sempre "falha", o que já aciona os fallbacks locais existentes
-// em cada função (autosave, histórico, backup, arquivo).
+// 🔌 VERSION LOCALE — SANS BACKEND, SANS LOGIN
+// Tout reste uniquement dans le localStorage de ce navigateur. apiFetch est un stub
+// qui "échoue" toujours, ce qui déclenche les fallbacks locaux existants
+// dans chaque fonction (autosave, historique, sauvegarde, archive).
 // ═══════════════════════════════════════════════════════════════
 async function apiFetch(path, opts) {
   throw new Error('OFFLINE_LOCAL_MODE');
@@ -6203,7 +6203,7 @@ async function initApp() {
       const raw = localStorage.getItem(AUTOSAVE_KEY);
       const session = JSON.parse(raw);
       const savedAt = new Date(session.savedAt).toLocaleString("fr-FR");
-      el.textContent = (lang === 'fr' ? "🔁 Session restaurée — " : "🔁 Sessão restaurada — ") + savedAt;
+      el.textContent = (lang === 'fr' ? "🔁 Session restaurée — " : "🔁 Session restaurée — ") + savedAt;
       setTimeout(() => { el.style.opacity = "0"; }, 4000);
     } catch(e) {}
   }
@@ -6251,7 +6251,7 @@ initApp();
 
 <!-- ═══════════════════════════════════════════════════════════════
      🤖 AI EMAIL IMPORT MODAL  — v1.3
-     Ficheiro .eml / .msg / .txt ou texto colado
+     Fichier .eml / .msg / .txt ou texte collé
      ═══════════════════════════════════════════════════════════════ -->
 <style>
 @keyframes ai-spin { to { transform: rotate(360deg); } }
@@ -6281,19 +6281,19 @@ initApp();
     <div style="background:linear-gradient(135deg,#1a237e,#3949ab);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
       <div>
         <div style="font-size:15px;font-weight:700;color:#fff;">🤖 Import IA — E-mail</div>
-        <div style="font-size:11px;color:#c5cae9;margin-top:2px;" id="ai-header-sub">Carregue um ficheiro de email ou cole o texto</div>
+        <div style="font-size:11px;color:#c5cae9;margin-top:2px;" id="ai-header-sub">Chargez un fichier email ou collez le texte</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <button onclick="_aiOpenConfig()" title="Configurar chave de API do provedor de IA" style="background:rgba(255,255,255,0.15);border:none;border-radius:7px;padding:5px 9px;cursor:pointer;color:#fff;font-size:14px;">⚙️ Configurar</button>
+        <button onclick="_aiOpenConfig()" title="Configurer la clé API du fournisseur d'IA" style="background:rgba(255,255,255,0.15);border:none;border-radius:7px;padding:5px 9px;cursor:pointer;color:#fff;font-size:14px;">⚙️ Configurer</button>
         <button onclick="closeAIEmailModal()" style="background:rgba(255,255,255,0.15);border:none;border-radius:7px;padding:5px 9px;cursor:pointer;color:#fff;font-size:16px;">✕</button>
       </div>
     </div>
 
     <!-- CONFIG panel (Client ID) -->
     <div id="ai-config-panel" style="display:none;background:#f5f7ff;border-bottom:1px solid #e8eaf6;padding:14px 22px;">
-      <div style="font-size:12px;font-weight:700;color:#1a237e;margin-bottom:8px;">🤖 Provedor de IA para análise do e-mail</div>
+      <div style="font-size:12px;font-weight:700;color:#1a237e;margin-bottom:8px;">🤖 Fournisseur d'IA pour l'analyse de l'e-mail</div>
       <div style="font-size:11px;color:#555;margin-bottom:8px;line-height:1.6;">
-        Escolha o provedor e cole a sua própria chave de API. A chave fica guardada apenas no <b>localStorage deste navegador</b> — nunca é salva no nosso servidor/banco, só é enviada no momento da análise.
+        Choisissez le fournisseur et collez votre propre clé API. La clé est stockée uniquement dans le <b>localStorage de ce navigateur</b> — elle n'est jamais enregistrée sur notre serveur/base de données, elle n'est envoyée qu'au moment de l'analyse.
       </div>
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
         <select id="ai-provider-select" onchange="_aiOnProviderChange()" style="padding:8px 10px;font-size:12px;border:1px solid #c5cae9;border-radius:7px;font-weight:600;color:#1a237e;">
@@ -6304,28 +6304,28 @@ initApp();
         <span id="ai-provider-hint" style="font-size:10px;color:#888;"></span>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <input type="password" id="ai-provider-key-input" autocomplete="off" placeholder="Cole a chave aqui..."
+        <input type="password" id="ai-provider-key-input" autocomplete="off" placeholder="Collez la clé ici..."
           style="flex:1;padding:8px 12px;font-size:12px;border:1px solid #c5cae9;border-radius:7px;font-family:monospace;" />
-        <button onclick="_aiSaveProviderKey()" style="padding:8px 16px;font-size:12px;font-weight:700;background:#1a237e;color:#fff;border:none;border-radius:7px;cursor:pointer;">💾 Guardar</button>
-        <button onclick="_aiClearProviderKey()" style="padding:8px 12px;font-size:12px;background:#ffebee;color:#c62828;border:1px solid #ffcdd2;border-radius:7px;cursor:pointer;">🗑 Limpar</button>
+        <button onclick="_aiSaveProviderKey()" style="padding:8px 16px;font-size:12px;font-weight:700;background:#1a237e;color:#fff;border:none;border-radius:7px;cursor:pointer;">💾 Enregistrer</button>
+        <button onclick="_aiClearProviderKey()" style="padding:8px 12px;font-size:12px;background:#ffebee;color:#c62828;border:1px solid #ffcdd2;border-radius:7px;cursor:pointer;">🗑 Effacer</button>
       </div>
       <div id="ai-provider-key-status" style="font-size:11px;margin-top:6px;color:#2e7d32;display:none;"></div>
       <div style="font-size:10px;color:#999;margin-top:6px;">
-        Sem chave própria, a análise usa (quando disponível) a chave padrão do Anthropic configurada no servidor.
+        Sans clé personnelle, l'analyse utilise (si disponible) la clé Anthropic par défaut configurée sur le serveur.
       </div>
     </div>
 
     <!-- Body -->
     <div style="padding:16px 22px;overflow-y:auto;flex:1;">
 
-      <!-- ── FICHEIRO / COLAR ── -->
+      <!-- ── FICHIER / COLLER ── -->
       <div class="ai-source-panel active" id="ai-panel-file">
 
         <!-- Tabs file/paste -->
         <div style="display:flex;gap:4px;margin-bottom:12px;">
-          <button class="ai-tab active" id="ai-subtab-drop" onclick="_aiSubTab('drop')" style="flex:none;padding:6px 14px;font-size:11px;">📂 Carregar ficheiro</button>
-          <button class="ai-tab" id="ai-subtab-paste" onclick="_aiSubTab('paste')" style="flex:none;padding:6px 14px;font-size:11px;">📋 Colar texto</button>
-          <button class="ai-tab" id="ai-subtab-pst" onclick="showToast('⚠️ Importação .pst exige o backend online — use a versão publicada para isso.')" style="flex:none;padding:6px 14px;font-size:11px;opacity:0.5;cursor:not-allowed;" title="Indisponível na versão local (sem backend)">📦 Importar .pst (online)</button>
+          <button class="ai-tab active" id="ai-subtab-drop" onclick="_aiSubTab('drop')" style="flex:none;padding:6px 14px;font-size:11px;">📂 Charger un fichier</button>
+          <button class="ai-tab" id="ai-subtab-paste" onclick="_aiSubTab('paste')" style="flex:none;padding:6px 14px;font-size:11px;">📋 Coller le texte</button>
+          <button class="ai-tab" id="ai-subtab-pst" onclick="showToast('⚠️ L\'import .pst nécessite le backend en ligne — utilisez la version publiée pour cela.')" style="flex:none;padding:6px 14px;font-size:11px;opacity:0.5;cursor:not-allowed;" title="Indisponible dans la version locale (sans backend)">📦 Importer .pst (en ligne)</button>
         </div>
 
         <!-- Drop zone -->
@@ -6336,8 +6336,8 @@ initApp();
             ondragleave="this.classList.remove('dragover')"
             ondrop="_aiHandleDrop(event)">
             <div style="font-size:32px;margin-bottom:8px;">📧</div>
-            <div style="font-size:13px;font-weight:600;color:#1a237e;margin-bottom:4px;">Arraste o ficheiro de email aqui</div>
-            <div style="font-size:11px;color:#888;">ou clique para selecionar · .eml .msg .txt aceites</div>
+            <div style="font-size:13px;font-weight:600;color:#1a237e;margin-bottom:4px;">Glissez le fichier email ici</div>
+            <div style="font-size:11px;color:#888;">ou cliquez pour sélectionner · .eml .msg .txt acceptés</div>
           </div>
           <input type="file" id="ai-file-input" accept=".eml,.msg,.txt,.html" style="display:none;" onchange="_aiHandleFileInput(this)" />
           <div id="ai-file-name" style="display:none;margin-top:8px;font-size:11px;color:#2e7d32;background:#e8f5e9;padding:6px 10px;border-radius:6px;"></div>
@@ -6346,7 +6346,7 @@ initApp();
         <!-- Paste zone -->
         <div id="ai-subpanel-paste" style="display:none;">
           <textarea id="ai-email-text" rows="9"
-            placeholder="Cole aqui o texto do email (assunto, corpo, destinatários...)&#10;&#10;Exemplo:&#10;De: Jean Dupont&#10;Assunto: [Golfech] Affaire 2026-421 — Ponto soudagem&#10;&#10;Após a reunião de hoje:&#10;- Controlo soldadura junta 42A: Martin antes 30/06&#10;- Validação procedimento WPS-12: aguarda EDF&#10;- Formação TIG nível 2: prever julho"
+            placeholder="Collez ici le texte de l'email (sujet, corps, destinataires...)&#10;&#10;Exemple :&#10;De : Jean Dupont&#10;Sujet : [Golfech] Affaire 2026-421 — Point soudage&#10;&#10;Après la réunion d'aujourd'hui :&#10;- Contrôle soudage joint 42A : Martin avant le 30/06&#10;- Validation procédure WPS-12 : en attente EDF&#10;- Formation TIG niveau 2 : à prévoir en juillet"
             style="width:100%;padding:10px 12px;font-size:12px;border:1px solid #c5cae9;border-radius:8px;resize:vertical;font-family:monospace;color:#333;line-height:1.6;background:#f9f9ff;"></textarea>
         </div>
 
@@ -6359,8 +6359,8 @@ initApp();
               ondragleave="this.classList.remove('dragover')"
               ondrop="_aiHandlePstDrop(event)">
               <div style="font-size:32px;margin-bottom:8px;">📦</div>
-              <div style="font-size:13px;font-weight:600;color:#1a237e;margin-bottom:4px;">Arraste o ficheiro .pst aqui</div>
-              <div style="font-size:11px;color:#888;">ou clique para selecionar · máx. 80MB</div>
+              <div style="font-size:13px;font-weight:600;color:#1a237e;margin-bottom:4px;">Glissez le fichier .pst ici</div>
+              <div style="font-size:11px;color:#888;">ou cliquez pour sélectionner · max. 80 Mo</div>
             </div>
             <input type="file" id="ai-pst-file-input" accept=".pst" style="display:none;" onchange="_aiHandlePstInput(this)" />
             <div id="ai-pst-status" style="display:none;margin-top:8px;font-size:11px;padding:6px 10px;border-radius:6px;"></div>
@@ -6368,13 +6368,13 @@ initApp();
           <div id="ai-pst-step-list" style="display:none;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
               <span id="ai-pst-count" style="font-size:11px;color:#666;font-weight:600;"></span>
-              <button onclick="_aiPstReset()" style="font-size:11px;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:4px 10px;cursor:pointer;color:#666;">↺ Carregar outro .pst</button>
+              <button onclick="_aiPstReset()" style="font-size:11px;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:4px 10px;cursor:pointer;color:#666;">↺ Charger un autre .pst</button>
             </div>
-            <input type="text" placeholder="🔍 Filtrar por assunto/remetente..." oninput="_aiFilterPstEmails(this.value)"
+            <input type="text" placeholder="🔍 Filtrer par sujet/expéditeur..." oninput="_aiFilterPstEmails(this.value)"
               style="width:100%;padding:7px 10px;font-size:12px;border:1px solid #e0e0e0;border-radius:7px;margin-bottom:8px;" />
             <div id="ai-pst-email-list" style="max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;"></div>
             <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
-              <button onclick="_aiAnalysePstSelected()" style="padding:8px 16px;font-size:12px;font-weight:700;background:#1a237e;color:#fff;border:none;border-radius:7px;cursor:pointer;">🤖 Analisar selecionados</button>
+              <button onclick="_aiAnalysePstSelected()" style="padding:8px 16px;font-size:12px;font-weight:700;background:#1a237e;color:#fff;border:none;border-radius:7px;cursor:pointer;">🤖 Analyser la sélection</button>
               <span id="ai-pst-sel-count" style="font-size:11px;color:#666;"></span>
             </div>
           </div>
@@ -6382,10 +6382,10 @@ initApp();
 
         <!-- Detection chips -->
         <div id="ai-file-detect-chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center;">
-          <span style="font-size:11px;color:#666;font-weight:600;">Detecção auto:</span>
-          <span style="font-size:11px;background:#e8eaf6;color:#3949ab;border-radius:12px;padding:3px 10px;border:1px solid #c5cae9;">🏷️ Rubrica</span>
-          <span style="font-size:11px;background:#e8f5e9;color:#2e7d32;border-radius:12px;padding:3px 10px;border:1px solid #a5d6a7;">👤 Responsável</span>
-          <span style="font-size:11px;background:#fff3e0;color:#e65100;border-radius:12px;padding:3px 10px;border:1px solid #ffcc80;">📅 Data</span>
+          <span style="font-size:11px;color:#666;font-weight:600;">Détection auto :</span>
+          <span style="font-size:11px;background:#e8eaf6;color:#3949ab;border-radius:12px;padding:3px 10px;border:1px solid #c5cae9;">🏷️ Rubrique</span>
+          <span style="font-size:11px;background:#e8f5e9;color:#2e7d32;border-radius:12px;padding:3px 10px;border:1px solid #a5d6a7;">👤 Responsable</span>
+          <span style="font-size:11px;background:#fff3e0;color:#e65100;border-radius:12px;padding:3px 10px;border:1px solid #ffcc80;">📅 Date</span>
           <span style="font-size:11px;background:#fce4ec;color:#880e4f;border-radius:12px;padding:3px 10px;border:1px solid #f48fb1;">🔢 N° Affaire</span>
           <span style="font-size:11px;background:#e0f7fa;color:#00695c;border-radius:12px;padding:3px 10px;border:1px solid #80cbc4;">📍 Site</span>
         </div>
@@ -6393,13 +6393,13 @@ initApp();
         <div id="ai-file-run-row" style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           <button onclick="_aiRunFileExtraction()" id="ai-run-btn"
             style="padding:10px 24px;font-size:13px;font-weight:700;background:#1a237e;color:#fff;border:none;border-radius:8px;cursor:pointer;">
-            🤖 Analisar
+            🤖 Analyser
           </button>
         </div>
         <div style="margin-top:8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           <div id="ai-loading" style="display:none;font-size:12px;color:#3949ab;align-items:center;gap:6px;">
             <div style="width:16px;height:16px;border:2px solid #c5cae9;border-top-color:#1a237e;border-radius:50%;animation:ai-spin 0.8s linear infinite;flex-shrink:0;"></div>
-            Análise em curso…
+            Analyse en cours…
           </div>
           <div id="ai-error" style="display:none;font-size:12px;color:#c62828;background:#ffebee;padding:6px 12px;border-radius:6px;"></div>
         </div>
@@ -6410,15 +6410,15 @@ initApp();
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
           <div style="display:flex;align-items:center;gap:8px;">
             <div style="background:#2e7d32;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">✓</div>
-            <span style="font-size:13px;font-weight:600;color:#1a237e;">Verificar e ajustar antes de importar</span>
+            <span style="font-size:13px;font-weight:600;color:#1a237e;">Vérifier et ajuster avant l'import</span>
           </div>
-          <button onclick="_aiBackToSource()" style="font-size:11px;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:4px 10px;cursor:pointer;color:#666;">← Voltar</button>
+          <button onclick="_aiBackToSource()" style="font-size:11px;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:4px 10px;cursor:pointer;color:#666;">← Retour</button>
         </div>
         <div id="ai-summary-chips" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;padding:8px 12px;background:#f5f7ff;border-radius:8px;border:1px solid #e8eaf6;min-height:36px;"></div>
         <div id="ai-items-list" style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;padding-right:2px;"></div>
         <div style="margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           <button onclick="importAIItems()" style="padding:10px 24px;font-size:13px;font-weight:700;background:#2e7d32;color:#fff;border:none;border-radius:8px;cursor:pointer;">
-            ✅ Importar no CR
+            ✅ Importer dans le CR
           </button>
           <span id="ai-import-count" style="font-size:12px;color:#666;"></span>
         </div>
@@ -6477,13 +6477,13 @@ function _aiOpenConfig() {
   _aiOnProviderChange();
 }
 
-// ─── PROVEDOR DE IA (chave individual por usuário, só no navegador) ──
+// ─── FOURNISSEUR D'IA (clé individuelle par utilisateur, uniquement dans le navigateur) ──
 const _AI_PROVIDER_PREF_KEY = 'cr-ai-provider';
 const _AI_PROVIDER_KEY_PREFIX = 'cr-ai-key-';
 const _AI_PROVIDER_HINTS = {
-  anthropic: 'Pegue em console.anthropic.com → API Keys (começa com "sk-ant-").',
-  openai: 'Pegue em platform.openai.com/api-keys (começa com "sk-").',
-  gemini: 'Pegue em aistudio.google.com/apikey.',
+  anthropic: 'Récupérez-la sur console.anthropic.com → API Keys (commence par "sk-ant-").',
+  openai: 'Récupérez-la sur platform.openai.com/api-keys (commence par "sk-").',
+  gemini: 'Récupérez-la sur aistudio.google.com/apikey.',
 };
 
 function _aiCurrentProvider() {
@@ -6498,7 +6498,7 @@ function _aiOnProviderChange() {
   const st = document.getElementById('ai-provider-key-status');
   st.style.display = saved ? 'block' : 'none';
   st.style.color = '#2e7d32';
-  if (saved) st.textContent = '✅ Chave configurada: ' + saved.slice(0,8) + '…';
+  if (saved) st.textContent = '✅ Clé configurée : ' + saved.slice(0,8) + '…';
 }
 function _aiSaveProviderKey() {
   const provider = _aiCurrentProvider();
@@ -6506,12 +6506,12 @@ function _aiSaveProviderKey() {
   const st = document.getElementById('ai-provider-key-status');
   if (!v) {
     st.style.display = 'block'; st.style.color = '#c62828';
-    st.textContent = '⚠️ Cole uma chave antes de guardar.';
+    st.textContent = '⚠️ Collez une clé avant d\'enregistrer.';
     return;
   }
   localStorage.setItem(_AI_PROVIDER_KEY_PREFIX + provider, v);
   st.style.display = 'block'; st.style.color = '#2e7d32';
-  st.textContent = '✅ Chave guardada neste navegador.';
+  st.textContent = '✅ Clé enregistrée dans ce navigateur.';
 }
 function _aiClearProviderKey() {
   const provider = _aiCurrentProvider();
@@ -6519,14 +6519,14 @@ function _aiClearProviderKey() {
   document.getElementById('ai-provider-key-input').value = '';
   const st = document.getElementById('ai-provider-key-status');
   st.style.display = 'block'; st.style.color = '#e65100';
-  st.textContent = 'Chave removida.';
+  st.textContent = 'Clé supprimée.';
 }
 function _aiGetActiveProviderAndKey() {
   const provider = localStorage.getItem(_AI_PROVIDER_PREF_KEY) || 'anthropic';
   const apiKey = localStorage.getItem(_AI_PROVIDER_KEY_PREFIX + provider) || '';
   return { provider, apiKey };
 }
-// ─── FICHEIRO / TEXTO ──────────────────────────────────
+// ─── FICHIER / TEXTE ──────────────────────────────────
 function _aiHandleDrop(e) {
   e.preventDefault();
   document.getElementById('ai-dropzone').classList.remove('dragover');
@@ -6556,15 +6556,15 @@ async function _aiRunFileExtraction() {
   let emailText = '';
   if (activeSubTab === 'paste') {
     emailText = (document.getElementById('ai-email-text').value || '').trim();
-    if (!emailText) { _showAIError('Cole o conteúdo do email antes de analisar.'); return; }
+    if (!emailText) { _showAIError('Collez le contenu de l\'email avant d\'analyser.'); return; }
   } else {
-    if (!_aiFileContent) { _showAIError('Carregue um ficheiro antes de analisar.'); return; }
+    if (!_aiFileContent) { _showAIError('Chargez un fichier avant d\'analyser.'); return; }
     emailText = _aiFileContent;
   }
   await _aiRunExtraction(emailText);
 }
 
-// ─── OPÇÃO C : IMPORTAR .PST ──────────────────────────────────────
+// ─── OPTION C : IMPORTER .PST ──────────────────────────────────────
 let _aiPstEmails = [];
 let _aiPstSelected = new Set();
 
@@ -6579,10 +6579,10 @@ function _aiHandlePstInput(input) {
 }
 async function _aiUploadPst(file) {
   if (!file.name.toLowerCase().endsWith('.pst')) {
-    _aiPstShowStatus('⚠️ Selecione um ficheiro .pst.', '#c62828', '#ffebee');
+    _aiPstShowStatus('⚠️ Sélectionnez un fichier .pst.', '#c62828', '#ffebee');
     return;
   }
-  _aiPstShowStatus('⏳ A processar "' + file.name + '" (' + (file.size/1024/1024).toFixed(1) + ' MB)... pode demorar um pouco em ficheiros grandes.', '#1a237e', '#e8eaf6');
+  _aiPstShowStatus('⏳ Traitement de "' + file.name + '" (' + (file.size/1024/1024).toFixed(1) + ' Mo)... cela peut prendre un moment pour les fichiers volumineux.', '#1a237e', '#e8eaf6');
 
   const formData = new FormData();
   formData.append('file', file);
@@ -6597,17 +6597,17 @@ async function _aiUploadPst(file) {
       body: formData,
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || `Erro ${res.status}`);
+    if (!res.ok) throw new Error(data.error || `Erreur ${res.status}`);
 
     _aiPstEmails = data.messages || [];
     _aiPstSelected = new Set(_aiPstEmails.map(m => m.id));
     if (!_aiPstEmails.length) {
-      _aiPstShowStatus('⚠️ Nenhum email encontrado dentro do .pst.', '#e65100', '#fff3e0');
+      _aiPstShowStatus('⚠️ Aucun email trouvé dans le .pst.', '#e65100', '#fff3e0');
       return;
     }
     document.getElementById('ai-pst-step-upload').style.display = 'none';
     document.getElementById('ai-pst-step-list').style.display = 'block';
-    document.getElementById('ai-pst-count').textContent = _aiPstEmails.length + ' email(s) encontrado(s)' + (data.truncated ? ' (lista truncada)' : '');
+    document.getElementById('ai-pst-count').textContent = _aiPstEmails.length + ' email(s) trouvé(s)' + (data.truncated ? ' (liste tronquée)' : '');
     _aiRenderPstEmailList(_aiPstEmails);
     _aiUpdatePstSelCount();
   } catch (e) {
@@ -6633,7 +6633,7 @@ function _aiRenderPstEmailList(emails) {
   const list = document.getElementById('ai-pst-email-list');
   list.innerHTML = '';
   if (!emails.length) {
-    list.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px;font-style:italic;">Nenhum email encontrado.</div>';
+    list.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px;font-style:italic;">Aucun email trouvé.</div>';
     return;
   }
   emails.forEach(m => {
@@ -6679,10 +6679,10 @@ function _aiFilterPstEmails(q) {
 }
 function _aiUpdatePstSelCount() {
   const n = _aiPstSelected.size;
-  document.getElementById('ai-pst-sel-count').textContent = n ? n + ' email(s) selecionado(s)' : '';
+  document.getElementById('ai-pst-sel-count').textContent = n ? n + ' email(s) sélectionné(s)' : '';
 }
 async function _aiAnalysePstSelected() {
-  if (!_aiPstSelected.size) { showToast('⚠️ Selecione pelo menos um email.'); return; }
+  if (!_aiPstSelected.size) { showToast('⚠️ Sélectionnez au moins un email.'); return; }
   const selected = _aiPstEmails.filter(m => _aiPstSelected.has(m.id));
   let combined = '';
   for (const m of selected) {
@@ -6692,7 +6692,7 @@ async function _aiAnalysePstSelected() {
 }
 
 // ─── CORE EXTRACTION (shared) ────────────────────────────────────
-// Versão local: chama o provedor de IA direto do navegador (sem backend).
+// Version locale : appelle le fournisseur d'IA directement depuis le navigateur (sans backend).
 function _aiBuildPromptLocal(emailText, sections) {
   const sectionsCtx = (sections || []).map(s => `- id:"${s.id}" label:"${s.label}" emoji:"${s.emoji||''}"`).join('\n');
   return `Tu es un assistant expert en gestion de projets industriels nucléaires (soudage EDF).
@@ -6735,7 +6735,7 @@ async function _aiCallProviderDirect(provider, apiKey, prompt) {
       headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+apiKey },
       body: JSON.stringify({ model:'gpt-4o-mini', messages:[{role:'user',content:prompt}], response_format:{type:'json_object'} }),
     });
-    if (!res.ok) throw new Error(`API OpenAI respondeu ${res.status}: ${(await res.text()).slice(0,200)}`);
+    if (!res.ok) throw new Error(`L'API OpenAI a répondu ${res.status}: ${(await res.text()).slice(0,200)}`);
     const data = await res.json();
     return _aiParseItemsJsonLocal(data.choices?.[0]?.message?.content || '');
   }
@@ -6745,18 +6745,18 @@ async function _aiCallProviderDirect(provider, apiKey, prompt) {
       headers: { 'Content-Type':'application/json' },
       body: JSON.stringify({ contents:[{parts:[{text:prompt}]}], generationConfig:{responseMimeType:'application/json'} }),
     });
-    if (!res.ok) throw new Error(`API Gemini respondeu ${res.status}: ${(await res.text()).slice(0,200)}`);
+    if (!res.ok) throw new Error(`L'API Gemini a répondu ${res.status}: ${(await res.text()).slice(0,200)}`);
     const data = await res.json();
     const raw = data.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('') || '';
     return _aiParseItemsJsonLocal(raw);
   }
-  // anthropic (padrão)
+  // anthropic (par défaut)
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'Content-Type':'application/json', 'x-api-key':apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
     body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:1000, messages:[{role:'user',content:prompt}] }),
   });
-  if (!res.ok) throw new Error(`API Anthropic respondeu ${res.status}: ${(await res.text()).slice(0,200)}`);
+  if (!res.ok) throw new Error(`L'API Anthropic a répondu ${res.status}: ${(await res.text()).slice(0,200)}`);
   const data = await res.json();
   const raw = (data.content||[]).map(b=>b.text||'').join('');
   return _aiParseItemsJsonLocal(raw);
@@ -6772,12 +6772,12 @@ async function _aiRunExtraction(emailText) {
   const { provider, apiKey } = _aiGetActiveProviderAndKey();
 
   try {
-    if (!apiKey) throw new Error('Configure a sua chave de API em ⚙️ Configurar antes de analisar.');
+    if (!apiKey) throw new Error('Configurez votre clé API dans ⚙️ Configurer avant d\'analyser.');
     const prompt = _aiBuildPromptLocal(emailText, sections);
     _aiExtracted = await _aiCallProviderDirect(provider, apiKey, prompt);
     _renderAIStep2();
   } catch(e) {
-    _showAIError('Erro de análise IA: ' + e.message);
+    _showAIError('Erreur d\'analyse IA : ' + e.message);
     document.getElementById('ai-panel-file').classList.add('active');
     document.getElementById('ai-loading').style.display = 'none';
     if (document.getElementById('ai-run-btn')) document.getElementById('ai-run-btn').style.display = '';
@@ -6804,22 +6804,22 @@ function _renderAIStep2() {
   const dates    = _aiExtracted.filter(i=>i.dueDate).length;
   const affaires = [...new Set(_aiExtracted.map(i=>i.affaire).filter(Boolean))];
   chips.innerHTML = [
-    `<span style="font-size:11px;font-weight:700;color:#1a237e;background:#e8eaf6;border-radius:10px;padding:3px 10px;">${total} ação${total!==1?'s':''} detetada${total!==1?'s':''}</span>`,
+    `<span style="font-size:11px;font-weight:700;color:#1a237e;background:#e8eaf6;border-radius:10px;padding:3px 10px;">${total} action${total!==1?'s':''} détectée${total!==1?'s':''}</span>`,
     sites.length    ? `<span style="font-size:11px;background:#e0f7fa;color:#00695c;border-radius:10px;padding:3px 10px;">📍 ${sites.join(', ')}</span>` : '',
     resps.length    ? `<span style="font-size:11px;background:#e8f5e9;color:#2e7d32;border-radius:10px;padding:3px 10px;">👤 ${resps.join(', ')}</span>` : '',
-    dates           ? `<span style="font-size:11px;background:#fff3e0;color:#e65100;border-radius:10px;padding:3px 10px;">📅 ${dates} data${dates!==1?'s':''}</span>` : '',
+    dates           ? `<span style="font-size:11px;background:#fff3e0;color:#e65100;border-radius:10px;padding:3px 10px;">📅 ${dates} date${dates!==1?'s':''}</span>` : '',
     affaires.length ? `<span style="font-size:11px;background:#fce4ec;color:#880e4f;border-radius:10px;padding:3px 10px;">🔢 ${affaires.join(', ')}</span>` : '',
   ].join('');
 
   const list = document.getElementById('ai-items-list');
   list.innerHTML = '';
   if (!_aiExtracted.length) {
-    list.innerHTML = '<div style="text-align:center;color:#aaa;padding:30px;font-style:italic;">Nenhuma ação detetada neste email.</div>';
+    list.innerHTML = '<div style="text-align:center;color:#aaa;padding:30px;font-style:italic;">Aucune action détectée dans cet email.</div>';
     document.getElementById('ai-import-count').textContent = '';
     return;
   }
-  const statusOpts = [['a-faire','📋 A fazer'],['en-cours','🔄 Em curso'],['en-attente','⏳ Em espera'],['non-commence','❌ Não iniciado'],['termine','✅ Terminado']];
-  const prioOpts   = [['non-prioritaire','— Não prioritário'],['prioritaire','⭐ Prioritário'],['attente-validation','🔒 Aguarda validação']];
+  const statusOpts = [['a-faire','📋 À faire'],['en-cours','🔄 En cours'],['en-attente','⏳ En attente'],['non-commence','❌ Non commencé'],['termine','✅ Terminé']];
+  const prioOpts   = [['non-prioritaire','— Non prioritaire'],['prioritaire','⭐ Prioritaire'],['attente-validation','🔒 Attente de validation']];
 
   _aiExtracted.forEach((item,idx) => {
     const secOpts  = state.sections.map(s=>`<option value="${s.id}" ${s.id===item.section_id?'selected':''}>${s.emoji} ${s.label}</option>`).join('');
@@ -6835,10 +6835,10 @@ function _renderAIStep2() {
         <div style="flex:1;min-width:0;">
           <input type="text" value="${escHtml(item.text||'')}" oninput="_aiExtracted[${idx}].text=this.value"
             style="width:100%;font-size:12px;font-weight:600;color:#1a237e;border:1px solid #c5cae9;border-radius:5px;padding:4px 8px;margin-bottom:6px;" />
-          <div class="ai-item-field"><label>🏷️ Rubrica</label><select onchange="_aiExtracted[${idx}].section_id=this.value">${secOpts}</select></div>
+          <div class="ai-item-field"><label>🏷️ Rubrique</label><select onchange="_aiExtracted[${idx}].section_id=this.value">${secOpts}</select></div>
           <div class="ai-item-field">
-            <label>🔄 Estado</label><select onchange="_aiExtracted[${idx}].status=this.value">${stOpts}</select>
-            <label>⭐ Prioridade</label><select onchange="_aiExtracted[${idx}].priority=this.value">${prOpts}</select>
+            <label>🔄 État</label><select onchange="_aiExtracted[${idx}].status=this.value">${stOpts}</select>
+            <label>⭐ Priorité</label><select onchange="_aiExtracted[${idx}].priority=this.value">${prOpts}</select>
             <label style="min-width:16px;">%</label><input type="number" min="0" max="100" value="${item.pct||0}" oninput="_aiExtracted[${idx}].pct=+this.value" style="width:58px;flex:none;" />
           </div>
           <div class="ai-item-field">
@@ -6846,10 +6846,10 @@ function _renderAIStep2() {
             <label>📍 Site</label><select onchange="_aiExtracted[${idx}].site=this.value">${siteOpts}</select>
           </div>
           <div class="ai-item-field">
-            <label>📅 Prazo</label><input type="date" value="${escHtml(item.dueDate||'')}" onchange="_aiExtracted[${idx}].dueDate=this.value" style="width:140px;flex:none;" />
+            <label>📅 Échéance</label><input type="date" value="${escHtml(item.dueDate||'')}" onchange="_aiExtracted[${idx}].dueDate=this.value" style="width:140px;flex:none;" />
             <label>🔢 Affaire</label><input type="text" value="${escHtml(item.affaire||'')}" oninput="_aiExtracted[${idx}].affaire=this.value" />
           </div>
-          ${item.comment?`<div class="ai-item-field"><label>💬 Nota</label><input type="text" value="${escHtml(item.comment)}" oninput="_aiExtracted[${idx}].comment=this.value" /></div>`:''}
+          ${item.comment?`<div class="ai-item-field"><label>💬 Note</label><input type="text" value="${escHtml(item.comment)}" oninput="_aiExtracted[${idx}].comment=this.value" /></div>`:''}
         </div>
       </div>`;
     list.appendChild(card);
@@ -6865,13 +6865,13 @@ function _toggleAIItem(idx, checked) {
 }
 function _updateAICount() {
   const n = _aiExtracted.filter(i=>i._checked).length;
-  document.getElementById('ai-import-count').textContent = n + ' elemento' + (n!==1?'s':'') + ' selecionado' + (n!==1?'s':'');
+  document.getElementById('ai-import-count').textContent = n + ' élément' + (n!==1?'s':'') + ' sélectionné' + (n!==1?'s':'');
 }
 
 // ─── IMPORT ──────────────────────────────────────────────────────
 function importAIItems() {
   const toImport = _aiExtracted.filter(i=>i._checked);
-  if (!toImport.length) { showToast('⚠️ Nenhum elemento selecionado!'); return; }
+  if (!toImport.length) { showToast('⚠️ Aucun élément sélectionné !'); return; }
   saveUndo();
   toImport.forEach(item => {
     const si = state.sections.findIndex(s=>s.id===item.section_id);
@@ -6885,7 +6885,7 @@ function importAIItems() {
     });
   });
   render(); autosave(); closeAIEmailModal();
-  showToast(`✅ ${toImport.length} elemento${toImport.length!==1?'s':''} importado${toImport.length!==1?'s':''} via IA!`);
+  showToast(`✅ ${toImport.length} élément${toImport.length!==1?'s':''} importé${toImport.length!==1?'s':''} via IA !`);
 }
 
 // ─── COMPAT aliases (used by old paste flow) ─────────────────────
