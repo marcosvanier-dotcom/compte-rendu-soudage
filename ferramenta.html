@@ -6916,8 +6916,8 @@ function runAIExtraction() { _aiRunFileExtraction(); }
           </div>
         </div>
         <div class="tk-field" id="tk-linked-field">
-          <label>Lier à un élément du CR (optionnel)</label>
-          <select id="tk-input-linked"><option value="">— Aucun —</option></select>
+          <label>Site</label>
+          <input type="text" id="tk-input-linked" placeholder="Saisir le site..." />
         </div>
 
         <!-- Bloc Fiche de situation dégradée (équipement) -->
@@ -7107,25 +7107,12 @@ function _tkRenderList() {
       <div style="font-size:11px;color:#888;margin-top:4px;display:flex;gap:10px;flex-wrap:wrap;">
         <span>${TK_TYPE_LABELS[t.type]||t.type}</span>
         <span>${TK_PRIORITY_LABELS[t.priority]||t.priority}</span>
-        ${t.linkedItemText?`<span>🔗 ${escHtml(t.linkedItemText)}</span>`:''}
+        ${t.site?`<span>📍 ${escHtml(t.site)}</span>`:''}
       </div>
     </div>`).join('');
 }
 
 // ─── FORMULAIRE ────────────────────────────────────────────────
-function _tkPopulateLinkedSelect(selectedValue) {
-  const sel = document.getElementById('tk-input-linked');
-  const options = ['<option value="">— Aucun —</option>'];
-  state.sections.forEach(sec => {
-    (sec.items||[]).forEach((it, idx) => {
-      const value = sec.id + '::' + idx;
-      const label = `${sec.emoji} ${sec.label} — ${(it.text||'(sans titre)').slice(0,60)}`;
-      options.push(`<option value="${escHtml(value)}">${escHtml(label)}</option>`);
-    });
-  });
-  sel.innerHTML = options.join('');
-  sel.value = selectedValue || '';
-}
 const TK_EQUIP_FIELDS = ['nom','date','site','repere','marque','nserie','generateur','version','tete','baie',
   'desc-situation','desc-solution','prise-en-compte','prise-date'];
 let _tkEquipPhotos = { situation: [], solution: [] };
@@ -7319,7 +7306,7 @@ function _tkShowNewForm() {
   document.getElementById('tk-input-desc').value = '';
   document.getElementById('tk-input-priority').value = 'normale';
   document.getElementById('tk-input-status').value = 'ouvert';
-  _tkPopulateLinkedSelect('');
+  document.getElementById('tk-input-linked').value = '';
   document.getElementById('tk-history-block').style.display = 'none';
   document.getElementById('tk-delete-btn').style.display = 'none';
   _tkClearEquipFields();
@@ -7336,7 +7323,7 @@ function _tkEditTicket(id) {
   document.getElementById('tk-input-desc').value = ticket.description || '';
   document.getElementById('tk-input-priority').value = ticket.priority || 'normale';
   document.getElementById('tk-input-status').value = ticket.status || 'ouvert';
-  if (ticket.type !== 'equipement-degrade') _tkPopulateLinkedSelect(ticket.linkedKey || '');
+  document.getElementById('tk-input-linked').value = ticket.site || '';
   document.getElementById('tk-history-block').style.display = 'block';
   document.getElementById('tk-delete-btn').style.display = '';
   _tkRenderHistory(ticket.history || []);
@@ -7370,14 +7357,7 @@ function _tkAddHistoryNote() {
 function _tkSaveTicket() {
   const title = document.getElementById('tk-input-title').value.trim();
   if (!title) { showToast('⚠️ Le titre est obligatoire.'); return; }
-  const linkedValue = document.getElementById('tk-input-linked').value;
-  let linkedSectionId = '', linkedItemText = '';
-  if (linkedValue) {
-    const [secId, idxStr] = linkedValue.split('::');
-    const sec = state.sections.find(s => s.id === secId);
-    const item = sec && sec.items[+idxStr];
-    if (sec && item) { linkedSectionId = sec.id; linkedItemText = item.text || ''; }
-  }
+  const site = document.getElementById('tk-input-linked').value.trim();
   const tickets = _tkLoad();
   const now = new Date().toISOString();
 
@@ -7394,9 +7374,7 @@ function _tkSaveTicket() {
       ticket.history.push({ date: now, text: `Statut changé : ${TK_STATUS_LABELS[ticket.status]||ticket.status} → ${TK_STATUS_LABELS[newStatus]||newStatus}` });
     }
     ticket.status = newStatus;
-    ticket.linkedKey = linkedValue;
-    ticket.linkedSectionId = linkedSectionId;
-    ticket.linkedItemText = linkedItemText;
+    ticket.site = site;
     ticket.equip = ticket.type === 'equipement-degrade' ? _tkCollectEquipFields() : undefined;
     ticket.updatedAt = now;
     if (!_tkSave(tickets)) return;
@@ -7411,8 +7389,7 @@ function _tkSaveTicket() {
       description: document.getElementById('tk-input-desc').value.trim(),
       priority: document.getElementById('tk-input-priority').value,
       status: document.getElementById('tk-input-status').value,
-      linkedKey: linkedValue,
-      linkedSectionId, linkedItemText,
+      site,
       equip: type === 'equipement-degrade' ? _tkCollectEquipFields() : undefined,
       createdAt: now, updatedAt: now,
       history: [{ date: now, text: `Ticket créé (statut initial : ${TK_STATUS_LABELS[document.getElementById('tk-input-status').value] || document.getElementById('tk-input-status').value}).` }],
