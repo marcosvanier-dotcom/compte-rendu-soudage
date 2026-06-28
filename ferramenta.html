@@ -6979,7 +6979,7 @@ function runAIExtraction() { _aiRunFileExtraction(); }
             </select>
           </div>
         </div>
-        <div class="tk-field">
+        <div class="tk-field" id="tk-linked-field">
           <label>Lier à un élément du CR (optionnel)</label>
           <select id="tk-input-linked"><option value="">— Aucun —</option></select>
         </div>
@@ -6993,7 +6993,14 @@ function runAIExtraction() { _aiRunFileExtraction(); }
           </div>
           <div style="display:flex;gap:10px;">
             <div class="tk-field" style="flex:1;"><label>Site</label><input type="text" id="tk-eq-site" /></div>
-            <div class="tk-field" style="flex:1;"><label>Fichier LOG</label><input type="text" id="tk-eq-log" placeholder="Ex : en pièce jointe" /></div>
+            <div class="tk-field" style="flex:1;">
+              <label>Fichier LOG</label>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <button type="button" onclick="document.getElementById('tk-eq-log-file').click()" style="font-size:11px;background:#e8eaf6;border:1px solid #c5cae9;color:#1a237e;border-radius:6px;padding:6px 12px;cursor:pointer;font-weight:600;">📎 Joindre un fichier</button>
+                <span id="tk-eq-log-filename" style="font-size:11px;color:#666;">Aucun fichier joint</span>
+              </div>
+              <input type="file" id="tk-eq-log-file" style="display:none;" onchange="_tkHandleEquipFile(this,'log')" />
+            </div>
           </div>
           <div class="tk-field"><label>Repère fonctionnel</label><input type="text" id="tk-eq-repere" /></div>
           <div style="font-size:11px;font-weight:600;color:#555;margin-top:12px;">Désignation du matériel</div>
@@ -7010,9 +7017,25 @@ function runAIExtraction() { _aiRunFileExtraction(); }
             <div class="tk-field" style="flex:1;"><label>Baie vidéo</label><input type="text" id="tk-eq-baie" /></div>
           </div>
           <div class="tk-field"><label>Description de la situation dégradée</label><textarea id="tk-eq-desc-situation" rows="3"></textarea></div>
-          <div class="tk-field"><label>Photo / schéma — situation dégradée (optionnel)</label><input type="file" id="tk-eq-photo-situation" accept="image/*" onchange="_tkHandleEquipPhoto(this,'situation')" /><div id="tk-eq-photo-situation-preview" style="margin-top:6px;"></div></div>
+          <div class="tk-field">
+            <label>Photo / schéma — situation dégradée (optionnel)</label>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <button type="button" onclick="document.getElementById('tk-eq-photo-situation').click()" style="font-size:11px;background:#e8eaf6;border:1px solid #c5cae9;color:#1a237e;border-radius:6px;padding:6px 12px;cursor:pointer;font-weight:600;">📎 Choisir un fichier</button>
+              <span id="tk-eq-photo-situation-filename" style="font-size:11px;color:#666;">Aucun fichier sélectionné</span>
+            </div>
+            <input type="file" id="tk-eq-photo-situation" accept="image/*" style="display:none;" onchange="_tkHandleEquipPhoto(this,'situation')" />
+            <div id="tk-eq-photo-situation-preview" style="margin-top:6px;"></div>
+          </div>
           <div class="tk-field"><label>Solution proposée</label><textarea id="tk-eq-desc-solution" rows="3"></textarea></div>
-          <div class="tk-field"><label>Photo / schéma — solution (optionnel)</label><input type="file" id="tk-eq-photo-solution" accept="image/*" onchange="_tkHandleEquipPhoto(this,'solution')" /><div id="tk-eq-photo-solution-preview" style="margin-top:6px;"></div></div>
+          <div class="tk-field">
+            <label>Photo / schéma — solution (optionnel)</label>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <button type="button" onclick="document.getElementById('tk-eq-photo-solution').click()" style="font-size:11px;background:#e8eaf6;border:1px solid #c5cae9;color:#1a237e;border-radius:6px;padding:6px 12px;cursor:pointer;font-weight:600;">📎 Choisir un fichier</button>
+              <span id="tk-eq-photo-solution-filename" style="font-size:11px;color:#666;">Aucun fichier sélectionné</span>
+            </div>
+            <input type="file" id="tk-eq-photo-solution" accept="image/*" style="display:none;" onchange="_tkHandleEquipPhoto(this,'solution')" />
+            <div id="tk-eq-photo-solution-preview" style="margin-top:6px;"></div>
+          </div>
           <div style="font-size:11px;font-weight:600;color:#555;margin-top:12px;">Prise en compte et solde de la demande</div>
           <div style="display:flex;gap:10px;">
             <div class="tk-field" style="flex:1;"><label>Prise en compte (cellule technique ou chef soudeur)</label><input type="text" id="tk-eq-prise-en-compte" /></div>
@@ -7122,17 +7145,20 @@ function _tkPopulateLinkedSelect(selectedValue) {
   sel.innerHTML = options.join('');
   sel.value = selectedValue || '';
 }
-const TK_EQUIP_FIELDS = ['nom','date','site','log','repere','marque','nserie','generateur','version','tete','baie',
+const TK_EQUIP_FIELDS = ['nom','date','site','repere','marque','nserie','generateur','version','tete','baie',
   'desc-situation','desc-solution','prise-en-compte','prise-date','ref-soudeur','ref-date'];
 let _tkEquipPhotos = { situation: '', solution: '' };
+let _tkEquipLogFile = { name: '', data: '' };
 function _tkToggleEquipBlock() {
   const isEquip = document.getElementById('tk-input-type').value === 'equipement-degrade';
   document.getElementById('tk-equip-block').style.display = isEquip ? 'block' : 'none';
+  document.getElementById('tk-linked-field').style.display = isEquip ? 'none' : 'block';
 }
 function _tkHandleEquipPhoto(input, which) {
   const file = input.files[0];
   if (!file) return;
   if (file.size > 800*1024) { showToast('⚠️ Image trop lourde (max ~800 Ko).'); input.value=''; return; }
+  document.getElementById(`tk-eq-photo-${which}-filename`).textContent = file.name;
   const reader = new FileReader();
   reader.onload = e => {
     _tkEquipPhotos[which] = e.target.result;
@@ -7141,26 +7167,50 @@ function _tkHandleEquipPhoto(input, which) {
   };
   reader.readAsDataURL(file);
 }
+function _tkHandleEquipFile(input, which) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 800*1024) { showToast('⚠️ Fichier trop lourd (max ~800 Ko).'); input.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    _tkEquipLogFile = { name: file.name, data: e.target.result };
+    document.getElementById('tk-eq-log-filename').textContent = file.name;
+  };
+  reader.readAsDataURL(file);
+}
 function _tkClearEquipFields() {
   TK_EQUIP_FIELDS.forEach(f => { const el = document.getElementById('tk-eq-'+f); if (el) el.value = ''; });
   _tkEquipPhotos = { situation:'', solution:'' };
+  _tkEquipLogFile = { name:'', data:'' };
   document.getElementById('tk-eq-photo-situation-preview').innerHTML = '';
   document.getElementById('tk-eq-photo-solution-preview').innerHTML = '';
+  document.getElementById('tk-eq-photo-situation-filename').textContent = 'Aucun fichier sélectionné';
+  document.getElementById('tk-eq-photo-solution-filename').textContent = 'Aucun fichier sélectionné';
+  document.getElementById('tk-eq-log-filename').textContent = 'Aucun fichier joint';
   const fis = document.getElementById('tk-eq-photo-situation'); if (fis) fis.value='';
   const fso = document.getElementById('tk-eq-photo-solution'); if (fso) fso.value='';
+  const flog = document.getElementById('tk-eq-log-file'); if (flog) flog.value='';
 }
 function _tkFillEquipFields(equip) {
   equip = equip || {};
   TK_EQUIP_FIELDS.forEach(f => { const el = document.getElementById('tk-eq-'+f); if (el) el.value = equip[f] || ''; });
   _tkEquipPhotos = { situation: equip.photoSituation||'', solution: equip.photoSolution||'' };
+  _tkEquipLogFile = { name: equip.logFileName||'', data: equip.logFileData||'' };
   document.getElementById('tk-eq-photo-situation-preview').innerHTML = equip.photoSituation ? `<img src="${equip.photoSituation}" style="max-width:160px;max-height:120px;border-radius:6px;border:1px solid #ddd;" />` : '';
   document.getElementById('tk-eq-photo-solution-preview').innerHTML  = equip.photoSolution  ? `<img src="${equip.photoSolution}"  style="max-width:160px;max-height:120px;border-radius:6px;border:1px solid #ddd;" />` : '';
+  document.getElementById('tk-eq-photo-situation-filename').textContent = equip.photoSituationName || 'Aucun fichier sélectionné';
+  document.getElementById('tk-eq-photo-solution-filename').textContent  = equip.photoSolutionName  || 'Aucun fichier sélectionné';
+  document.getElementById('tk-eq-log-filename').textContent = equip.logFileName || 'Aucun fichier joint';
 }
 function _tkCollectEquipFields() {
   const equip = {};
   TK_EQUIP_FIELDS.forEach(f => { equip[f] = (document.getElementById('tk-eq-'+f)||{}).value || ''; });
   equip.photoSituation = _tkEquipPhotos.situation || '';
   equip.photoSolution = _tkEquipPhotos.solution || '';
+  equip.photoSituationName = _tkEquipPhotos.situation ? document.getElementById('tk-eq-photo-situation-filename').textContent : '';
+  equip.photoSolutionName = _tkEquipPhotos.solution ? document.getElementById('tk-eq-photo-solution-filename').textContent : '';
+  equip.logFileName = _tkEquipLogFile.name || '';
+  equip.logFileData = _tkEquipLogFile.data || '';
   return equip;
 }
 function _tkPrintEquipFiche() {
@@ -7181,7 +7231,7 @@ function _tkPrintEquipFiche() {
   <tr><td class="lbl">Nom</td><td>${escHtml(eq.nom)}</td><td class="lbl">Marque</td><td>${escHtml(eq.marque)}</td></tr>
   <tr><td class="lbl">Date</td><td>${fmtDate(eq.date)}</td><td class="lbl">N° série</td><td>${escHtml(eq.nserie)}</td></tr>
   <tr><td class="lbl">Site</td><td>${escHtml(eq.site)}</td><td class="lbl">Générateur</td><td>${escHtml(eq.generateur)}</td></tr>
-  <tr><td class="lbl">Fichier LOG</td><td>${escHtml(eq.log)}</td><td class="lbl">Version IHM</td><td>${escHtml(eq.version)}</td></tr>
+  <tr><td class="lbl">Fichier LOG</td><td>${eq.logFileName?escHtml(eq.logFileName):'—'}</td><td class="lbl">Version IHM</td><td>${escHtml(eq.version)}</td></tr>
   <tr><td class="lbl">Repère fonctionnel</td><td>${escHtml(eq.repere)}</td><td class="lbl">Tête</td><td>${escHtml(eq.tete)}</td></tr>
   <tr><td class="lbl">Baie vidéo</td><td colspan="3">${escHtml(eq.baie)}</td></tr>
   </table>
