@@ -6944,10 +6944,11 @@ function runAIExtraction() { _aiRunFileExtraction(); }
         <button onclick="_tkShowList()" style="font-size:11px;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:4px 10px;cursor:pointer;color:#666;margin-bottom:8px;">← Retour à la liste</button>
         <div class="tk-field">
           <label>Type</label>
-          <select id="tk-input-type">
+          <select id="tk-input-type" onchange="_tkToggleEquipBlock()">
             <option value="incident">🔴 Incident</option>
             <option value="non-conformite">⚠️ Non-conformité</option>
             <option value="demande">📩 Demande</option>
+            <option value="equipement-degrade">🔧 Situation dégradée (équipement)</option>
           </select>
         </div>
         <div class="tk-field">
@@ -6981,6 +6982,47 @@ function runAIExtraction() { _aiRunFileExtraction(); }
         <div class="tk-field">
           <label>Lier à un élément du CR (optionnel)</label>
           <select id="tk-input-linked"><option value="">— Aucun —</option></select>
+        </div>
+
+        <!-- Bloc Fiche de situation dégradée (équipement) -->
+        <div id="tk-equip-block" style="display:none;margin-top:14px;border:1px solid #e0e0e0;border-radius:8px;padding:12px 14px;background:#fafafa;">
+          <div style="font-size:12px;font-weight:700;color:#37474f;margin-bottom:8px;">🔧 Fiche de situation dégradée — Équipement</div>
+          <div style="display:flex;gap:10px;">
+            <div class="tk-field" style="flex:1;margin-top:0;"><label>Nom</label><input type="text" id="tk-eq-nom" /></div>
+            <div class="tk-field" style="flex:1;margin-top:0;"><label>Date du constat</label><input type="date" id="tk-eq-date" /></div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <div class="tk-field" style="flex:1;"><label>Site</label><input type="text" id="tk-eq-site" /></div>
+            <div class="tk-field" style="flex:1;"><label>Fichier LOG</label><input type="text" id="tk-eq-log" placeholder="Ex : en pièce jointe" /></div>
+          </div>
+          <div class="tk-field"><label>Repère fonctionnel</label><input type="text" id="tk-eq-repere" /></div>
+          <div style="font-size:11px;font-weight:600;color:#555;margin-top:12px;">Désignation du matériel</div>
+          <div style="display:flex;gap:10px;">
+            <div class="tk-field" style="flex:1;"><label>Marque</label><input type="text" id="tk-eq-marque" placeholder="Ex : Polysoude" /></div>
+            <div class="tk-field" style="flex:1;"><label>N° série</label><input type="text" id="tk-eq-nserie" /></div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <div class="tk-field" style="flex:1;"><label>Générateur</label><input type="text" id="tk-eq-generateur" /></div>
+            <div class="tk-field" style="flex:1;"><label>Version IHM</label><input type="text" id="tk-eq-version" /></div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <div class="tk-field" style="flex:1;"><label>Tête</label><input type="text" id="tk-eq-tete" /></div>
+            <div class="tk-field" style="flex:1;"><label>Baie vidéo</label><input type="text" id="tk-eq-baie" /></div>
+          </div>
+          <div class="tk-field"><label>Description de la situation dégradée</label><textarea id="tk-eq-desc-situation" rows="3"></textarea></div>
+          <div class="tk-field"><label>Photo / schéma — situation dégradée (optionnel)</label><input type="file" id="tk-eq-photo-situation" accept="image/*" onchange="_tkHandleEquipPhoto(this,'situation')" /><div id="tk-eq-photo-situation-preview" style="margin-top:6px;"></div></div>
+          <div class="tk-field"><label>Solution proposée</label><textarea id="tk-eq-desc-solution" rows="3"></textarea></div>
+          <div class="tk-field"><label>Photo / schéma — solution (optionnel)</label><input type="file" id="tk-eq-photo-solution" accept="image/*" onchange="_tkHandleEquipPhoto(this,'solution')" /><div id="tk-eq-photo-solution-preview" style="margin-top:6px;"></div></div>
+          <div style="font-size:11px;font-weight:600;color:#555;margin-top:12px;">Prise en compte et solde de la demande</div>
+          <div style="display:flex;gap:10px;">
+            <div class="tk-field" style="flex:1;"><label>Prise en compte (cellule technique ou chef soudeur)</label><input type="text" id="tk-eq-prise-en-compte" /></div>
+            <div class="tk-field" style="flex:1;"><label>Date / heure</label><input type="datetime-local" id="tk-eq-prise-date" /></div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <div class="tk-field" style="flex:1;"><label>Réf. soudeur</label><input type="text" id="tk-eq-ref-soudeur" /></div>
+            <div class="tk-field" style="flex:1;"><label>Date</label><input type="date" id="tk-eq-ref-date" /></div>
+          </div>
+          <button onclick="_tkPrintEquipFiche()" style="margin-top:10px;font-size:11px;background:#e8eaf6;border:1px solid #c5cae9;color:#1a237e;border-radius:6px;padding:6px 14px;cursor:pointer;font-weight:600;">🖨️ Aperçu / Imprimer la fiche</button>
         </div>
 
         <!-- Historique (édition seulement) -->
@@ -7019,7 +7061,7 @@ function _tkNextNumber(tickets) {
   const countThisYear = tickets.filter(t => t.number && t.number.startsWith('T-' + year + '-')).length;
   return `T-${year}-${String(countThisYear + 1).padStart(3,'0')}`;
 }
-const TK_TYPE_LABELS = { incident:'🔴 Incident', 'non-conformite':'⚠️ Non-conformité', demande:'📩 Demande' };
+const TK_TYPE_LABELS = { incident:'🔴 Incident', 'non-conformite':'⚠️ Non-conformité', demande:'📩 Demande', 'equipement-degrade':'🔧 Situation dégradée' };
 const TK_STATUS_LABELS = { ouvert:'🟢 Ouvert', 'en-cours':'🔄 En cours', resolu:'✅ Résolu', ferme:'⚫ Fermé' };
 const TK_PRIORITY_LABELS = { basse:'— Basse', normale:'Normale', haute:'⭐ Haute', critique:'🚨 Critique' };
 
@@ -7080,6 +7122,83 @@ function _tkPopulateLinkedSelect(selectedValue) {
   sel.innerHTML = options.join('');
   sel.value = selectedValue || '';
 }
+const TK_EQUIP_FIELDS = ['nom','date','site','log','repere','marque','nserie','generateur','version','tete','baie',
+  'desc-situation','desc-solution','prise-en-compte','prise-date','ref-soudeur','ref-date'];
+let _tkEquipPhotos = { situation: '', solution: '' };
+function _tkToggleEquipBlock() {
+  const isEquip = document.getElementById('tk-input-type').value === 'equipement-degrade';
+  document.getElementById('tk-equip-block').style.display = isEquip ? 'block' : 'none';
+}
+function _tkHandleEquipPhoto(input, which) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 800*1024) { showToast('⚠️ Image trop lourde (max ~800 Ko).'); input.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    _tkEquipPhotos[which] = e.target.result;
+    document.getElementById(`tk-eq-photo-${which}-preview`).innerHTML =
+      `<img src="${e.target.result}" style="max-width:160px;max-height:120px;border-radius:6px;border:1px solid #ddd;" />`;
+  };
+  reader.readAsDataURL(file);
+}
+function _tkClearEquipFields() {
+  TK_EQUIP_FIELDS.forEach(f => { const el = document.getElementById('tk-eq-'+f); if (el) el.value = ''; });
+  _tkEquipPhotos = { situation:'', solution:'' };
+  document.getElementById('tk-eq-photo-situation-preview').innerHTML = '';
+  document.getElementById('tk-eq-photo-solution-preview').innerHTML = '';
+  const fis = document.getElementById('tk-eq-photo-situation'); if (fis) fis.value='';
+  const fso = document.getElementById('tk-eq-photo-solution'); if (fso) fso.value='';
+}
+function _tkFillEquipFields(equip) {
+  equip = equip || {};
+  TK_EQUIP_FIELDS.forEach(f => { const el = document.getElementById('tk-eq-'+f); if (el) el.value = equip[f] || ''; });
+  _tkEquipPhotos = { situation: equip.photoSituation||'', solution: equip.photoSolution||'' };
+  document.getElementById('tk-eq-photo-situation-preview').innerHTML = equip.photoSituation ? `<img src="${equip.photoSituation}" style="max-width:160px;max-height:120px;border-radius:6px;border:1px solid #ddd;" />` : '';
+  document.getElementById('tk-eq-photo-solution-preview').innerHTML  = equip.photoSolution  ? `<img src="${equip.photoSolution}"  style="max-width:160px;max-height:120px;border-radius:6px;border:1px solid #ddd;" />` : '';
+}
+function _tkCollectEquipFields() {
+  const equip = {};
+  TK_EQUIP_FIELDS.forEach(f => { equip[f] = (document.getElementById('tk-eq-'+f)||{}).value || ''; });
+  equip.photoSituation = _tkEquipPhotos.situation || '';
+  equip.photoSolution = _tkEquipPhotos.solution || '';
+  return equip;
+}
+function _tkPrintEquipFiche() {
+  const eq = _tkCollectEquipFields();
+  const title = document.getElementById('tk-input-title').value.trim() || '(sans titre)';
+  const fmtDate = d => d ? new Date(d).toLocaleDateString('fr-FR') : '';
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Fiche de situation dégradée</title>
+  <style>
+    body{font-family:Arial,sans-serif;font-size:12px;color:#000;margin:20px;}
+    table{width:100%;border-collapse:collapse;margin-bottom:14px;}
+    td,th{border:1px solid #000;padding:6px 8px;vertical-align:top;}
+    .lbl{font-weight:700;background:#f0f0f0;width:160px;}
+    .hdr{font-weight:700;background:#cfd8dc;text-align:center;font-size:13px;}
+    img{max-width:100%;max-height:160px;}
+  </style></head><body>
+  <table><tr><td class="hdr" colspan="4">Fiche de situation dégradée soudage orbital — ${escHtml(title)}</td></tr>
+  <tr><td class="lbl">Nom</td><td>${escHtml(eq.nom)}</td><td class="lbl">Marque</td><td>${escHtml(eq.marque)}</td></tr>
+  <tr><td class="lbl">Date</td><td>${fmtDate(eq.date)}</td><td class="lbl">N° série</td><td>${escHtml(eq.nserie)}</td></tr>
+  <tr><td class="lbl">Site</td><td>${escHtml(eq.site)}</td><td class="lbl">Générateur</td><td>${escHtml(eq.generateur)}</td></tr>
+  <tr><td class="lbl">Fichier LOG</td><td>${escHtml(eq.log)}</td><td class="lbl">Version IHM</td><td>${escHtml(eq.version)}</td></tr>
+  <tr><td class="lbl">Repère fonctionnel</td><td>${escHtml(eq.repere)}</td><td class="lbl">Tête</td><td>${escHtml(eq.tete)}</td></tr>
+  <tr><td class="lbl">Baie vidéo</td><td colspan="3">${escHtml(eq.baie)}</td></tr>
+  </table>
+  <table><tr><td class="hdr" colspan="2">Description de la situation dégradée</td></tr>
+  <tr><td style="width:55%;">${escHtml(eq['desc-situation']).replace(/\n/g,'<br>')}</td><td>${eq.photoSituation?`<img src="${eq.photoSituation}">`:''}</td></tr>
+  </table>
+  <table><tr><td class="hdr" colspan="2">Solution proposée</td></tr>
+  <tr><td style="width:55%;">${escHtml(eq['desc-solution']).replace(/\n/g,'<br>')}</td><td>${eq.photoSolution?`<img src="${eq.photoSolution}">`:''}</td></tr>
+  </table>
+  <table><tr><td class="hdr" colspan="4">Prise en compte et solde de la demande</td></tr>
+  <tr><td class="lbl">Prise en compte cellule technique ou chef soudeur</td><td>${escHtml(eq['prise-en-compte'])}</td><td class="lbl">Date/heure</td><td>${eq['prise-date'] ? new Date(eq['prise-date']).toLocaleString('fr-FR') : ''}</td></tr>
+  <tr><td class="lbl">Réf. soudeur</td><td>${escHtml(eq['ref-soudeur'])}</td><td class="lbl">Date</td><td>${fmtDate(eq['ref-date'])}</td></tr>
+  </table>
+  <script>window.onload=()=>window.print();<\/script>
+  </body></html>`);
+  w.document.close();
+}
 function _tkShowNewForm() {
   _tkEditingId = null;
   document.getElementById('tk-list-view').style.display = 'none';
@@ -7092,6 +7211,8 @@ function _tkShowNewForm() {
   _tkPopulateLinkedSelect('');
   document.getElementById('tk-history-block').style.display = 'none';
   document.getElementById('tk-delete-btn').style.display = 'none';
+  _tkClearEquipFields();
+  _tkToggleEquipBlock();
 }
 function _tkEditTicket(id) {
   const ticket = _tkLoad().find(t => t.id === id);
@@ -7108,6 +7229,8 @@ function _tkEditTicket(id) {
   document.getElementById('tk-history-block').style.display = 'block';
   document.getElementById('tk-delete-btn').style.display = '';
   _tkRenderHistory(ticket.history || []);
+  _tkFillEquipFields(ticket.equip);
+  _tkToggleEquipBlock();
 }
 function _tkRenderHistory(history) {
   const list = document.getElementById('tk-history-list');
@@ -7163,19 +7286,22 @@ function _tkSaveTicket() {
     ticket.linkedKey = linkedValue;
     ticket.linkedSectionId = linkedSectionId;
     ticket.linkedItemText = linkedItemText;
+    ticket.equip = ticket.type === 'equipement-degrade' ? _tkCollectEquipFields() : undefined;
     ticket.updatedAt = now;
     showToast(`✅ Ticket ${ticket.number} mis à jour.`);
   } else {
+    const type = document.getElementById('tk-input-type').value;
     const ticket = {
       id: 'tk_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6),
       number: _tkNextNumber(tickets),
-      type: document.getElementById('tk-input-type').value,
+      type,
       title,
       description: document.getElementById('tk-input-desc').value.trim(),
       priority: document.getElementById('tk-input-priority').value,
       status: document.getElementById('tk-input-status').value,
       linkedKey: linkedValue,
       linkedSectionId, linkedItemText,
+      equip: type === 'equipement-degrade' ? _tkCollectEquipFields() : undefined,
       createdAt: now, updatedAt: now,
       history: [{ date: now, text: 'Ticket créé.' }],
     };
