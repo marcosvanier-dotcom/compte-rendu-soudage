@@ -179,7 +179,6 @@ body.compact [id^="rtf-"] { display:none; }
       <button onclick="toggleTitleEdit()" title="Modifier le titre" style="background:none;border:none;cursor:pointer;font-size:16px;color:#9fa8da;padding:2px 4px;line-height:1;" id="title-edit-btn">✏️</button>
     </div>
     <div class="lang-btns">
-      <button onclick="openUpdateModal()" title="Mettre à jour l'application" style="background:none;border:1px solid #c5cae9;border-radius:20px;cursor:pointer;font-size:12px;padding:3px 10px;margin-right:4px;color:#1a237e;font-weight:600;">🔄 Mettre à jour</button>
       <button id="compact-btn" onclick="toggleCompactView()" title="Vue compacte" style="background:none;border:1px solid #ddd;border-radius:20px;cursor:pointer;font-size:15px;padding:3px 8px;margin-right:4px;">⊟</button>
       <button onclick="undo()" title="Ctrl+Z" style="background:none;border:1px solid #ddd;border-radius:20px;cursor:pointer;font-size:13px;padding:3px 8px;margin-right:4px;">↩</button>
       <button onclick="redo()" title="Ctrl+Y" style="background:none;border:1px solid #ddd;border-radius:20px;cursor:pointer;font-size:13px;padding:3px 8px;margin-right:4px;">↪</button>
@@ -446,30 +445,6 @@ body.compact [id^="rtf-"] { display:none; }
       </div>
     </div>
     <div id="daily-backup-list"></div>
-  </div>
-</div>
-
-<!-- UPDATE MODAL -->
-<div id="update-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:4000;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:14px;padding:28px;width:480px;max-width:95%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <p style="font-size:15px;font-weight:700;color:#1a237e;">🔄 Mettre à jour l'application</p>
-      <button onclick="document.getElementById('update-modal').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:20px;color:#aaa;">✕</button>
-    </div>
-    <div style="background:#f5f7ff;border:1px solid #e8eaf6;border-radius:8px;padding:12px 14px;margin-bottom:16px;">
-      <div style="font-size:12px;color:#666;margin-bottom:4px;">Version actuelle</div>
-      <div style="font-size:16px;font-weight:700;color:#1a237e;" id="current-version-display">v 1.1</div>
-    </div>
-    <p style="font-size:12px;color:#666;margin-bottom:8px;">Sélectionner le nouveau fichier HTML généré :</p>
-    <input type="file" id="update-file-input" accept=".html" style="font-size:12px;width:100%;margin-bottom:6px;" onchange="previewUpdateFile(this)" />
-    <div id="update-preview" style="margin-bottom:14px;"></div>
-    <div style="background:#fff8e1;border:1px solid #ffd54f;border-radius:8px;padding:10px 12px;font-size:11px;color:#795548;margin-bottom:16px;">
-      ⚠️ La mise à jour remplacera l'application mais <strong>conservera toutes vos données</strong> (session active + historique + archives).
-    </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;">
-      <button onclick="document.getElementById('update-modal').style.display='none'" style="padding:8px 16px;font-size:12px;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;cursor:pointer;color:#666;">Annuler</button>
-      <button onclick="confirmUpdate()" id="update-confirm-btn" disabled style="padding:8px 18px;font-size:12px;background:#ccc;color:#fff;border:none;border-radius:6px;cursor:not-allowed;font-weight:600;">🔄 Mettre à jour</button>
-    </div>
   </div>
 </div>
 
@@ -5488,63 +5463,8 @@ document.addEventListener("mousedown", e => {
   hideFloatingToolbar();
 });
 
-// ── APP VERSION & UPDATE ───────────────────────────────────────
+// ── APP VERSION ─────────────────────────────────────────────────
 const APP_VERSION = "1.1";
-
-
-function openUpdateModal() {
-  document.getElementById("current-version-display").textContent = "v " + APP_VERSION;
-  document.getElementById("update-preview").innerHTML = "";
-  document.getElementById("update-confirm-btn").disabled = true;
-  document.getElementById("update-confirm-btn").style.background = "#ccc";
-  document.getElementById("update-confirm-btn").style.cursor = "not-allowed";
-  document.getElementById("update-file-input").value = "";
-  document.getElementById("update-modal").style.display = "flex";
-}
-
-function previewUpdateFile(input) {
-  const file = input.files[0];
-  const preview = document.getElementById("update-preview");
-  const btn     = document.getElementById("update-confirm-btn");
-  if (!file) { preview.innerHTML = ""; return; }
-  const reader = new FileReader();
-  reader.onload = e => {
-    const content = e.target.result;
-    const vMatch  = content.match(/const APP_VERSION\s*=\s*["']([^"']+)["']/);
-    const newVer  = vMatch ? vMatch[1] : "?";
-    const isValid = content.includes("CR Cellule Soudage") && content.includes("cr-session-v2");
-    if (!isValid) {
-      preview.innerHTML = `<div style="padding:8px;background:#ffebee;border:1px solid #ef9a9a;border-radius:6px;font-size:11px;color:#c62828;">❌ Fichier invalide</div>`;
-      btn.disabled = true; btn.style.background="#ccc"; btn.style.cursor="not-allowed";
-      return;
-    }
-    preview.innerHTML = `<div style="padding:8px;background:#e8f5e9;border:1px solid #81c784;border-radius:6px;font-size:11px;color:#2e7d32;">✅ Fichier valide &nbsp;|&nbsp; <strong>Nouvelle version :</strong> v ${escHtml(newVer)} &nbsp;|&nbsp; <strong>Taille :</strong> ${(content.length/1024).toFixed(1)} Ko</div>`;
-    btn.disabled = false; btn.style.background="#1a237e"; btn.style.cursor="pointer";
-  };
-  reader.readAsText(file);
-}
-
-function confirmUpdate() {
-  const file = document.getElementById("update-file-input").files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    let newHTML = e.target.result;
-    const { ref, customTitle } = getMetaInfo();
-    const dateVal = document.getElementById("meta-date").value;
-    const session = { _type:"cr-session-v2", lang, metaDate:dateVal, metaRef:ref, metaTitle:customTitle,
-      sections: state.sections.map(s => ({ id:s.id, label:s.label, emoji:s.emoji, cls:s.cls, items:s.items })) };
-    const autosaveData = localStorage.getItem("cr-cellule-soudage-autosave") || "";
-    const historyData  = localStorage.getItem(HISTORY_KEY) || "[]";
-    const archiveData  = localStorage.getItem(ARCHIVE_KEY) || "[]";
-    const inject = `<script>window.__CR_PRELOAD__=${JSON.stringify(session)};try{${autosaveData?`localStorage.setItem("cr-cellule-soudage-autosave",${JSON.stringify(autosaveData)});`:''}localStorage.setItem(${JSON.stringify(HISTORY_KEY)},${JSON.stringify(historyData)});localStorage.setItem(${JSON.stringify(ARCHIVE_KEY)},${JSON.stringify(archiveData)});}catch(e){}<\/script>`;
-    newHTML = newHTML.replace('</head>', inject + '</head>');
-    dlFile(newHTML, "👉 Générateur CR Cellule Soudage V1.1.html", "text/html;charset=utf-8");
-    document.getElementById("update-modal").style.display = "none";
-    showToast("✅ Mise à jour téléchargée — ouvrez le nouveau fichier pour continuer.");
-  };
-  reader.readAsText(file);
-}
 
 function navigateToItem(si, ii) {
   // Close kanban modal
