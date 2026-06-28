@@ -6704,8 +6704,10 @@ function importAIItems() {
   const toImport = _aiExtracted.filter(i=>i._checked);
   if (!toImport.length) { showToast('⚠️ Aucun élément sélectionné !'); return; }
   saveUndo();
+  let fallbackCount = 0;
   toImport.forEach(item => {
     const si = state.sections.findIndex(s=>s.id===item.section_id);
+    if (si < 0) fallbackCount++;
     state.sections[si>=0?si:0].items.push({
       text: item.text||'', status: item.status||'a-faire',
       priority: item.priority||'non-prioritaire',
@@ -6717,6 +6719,9 @@ function importAIItems() {
   });
   render(); autosave(); closeAIEmailModal();
   showToast(`✅ ${toImport.length} élément${toImport.length!==1?'s':''} importé${toImport.length!==1?'s':''} via IA !`);
+  if (fallbackCount) {
+    showToast(`⚠️ ${fallbackCount} élément${fallbackCount!==1?'s':''} sans rubrique reconnue, placé${fallbackCount!==1?'s':''} dans "${state.sections[0].label}".`);
+  }
 }
 
 // ─── COMPAT aliases (used by old paste flow) ─────────────────────
