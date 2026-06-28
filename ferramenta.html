@@ -7093,6 +7093,15 @@ function _tkToggleEquipBlock() {
   document.getElementById('tk-equip-block').style.display = isEquip ? 'block' : 'none';
   document.getElementById('tk-linked-field').style.display = isEquip ? 'none' : 'block';
 }
+function _tkOpenImage(src) {
+  const w = window.open('', '_blank');
+  if (!w) { showToast('⚠️ Bloqueur de popup : autorisez les fenêtres pour voir la photo.'); return; }
+  w.document.write(`<!DOCTYPE html><html><head><title>Photo</title><style>body{margin:0;background:#222;display:flex;align-items:center;justify-content:center;min-height:100vh;}img{max-width:100%;max-height:100vh;}</style></head><body><img src="${src}"></body></html>`);
+  w.document.close();
+}
+function _tkPhotoPreviewHTML(src) {
+  return src ? `<img src="${src}" onclick="_tkOpenImage(this.src)" title="Cliquer pour agrandir" style="max-width:160px;max-height:120px;border-radius:6px;border:1px solid #ddd;cursor:zoom-in;" />` : '';
+}
 function _tkHandleEquipPhoto(input, which) {
   const file = input.files[0];
   if (!file) return;
@@ -7101,8 +7110,7 @@ function _tkHandleEquipPhoto(input, which) {
   const reader = new FileReader();
   reader.onload = e => {
     _tkEquipPhotos[which] = e.target.result;
-    document.getElementById(`tk-eq-photo-${which}-preview`).innerHTML =
-      `<img src="${e.target.result}" style="max-width:160px;max-height:120px;border-radius:6px;border:1px solid #ddd;" />`;
+    document.getElementById(`tk-eq-photo-${which}-preview`).innerHTML = _tkPhotoPreviewHTML(e.target.result);
   };
   reader.readAsDataURL(file);
 }
@@ -7135,8 +7143,8 @@ function _tkFillEquipFields(equip) {
   TK_EQUIP_FIELDS.forEach(f => { const el = document.getElementById('tk-eq-'+f); if (el) el.value = equip[f] || ''; });
   _tkEquipPhotos = { situation: equip.photoSituation||'', solution: equip.photoSolution||'' };
   _tkEquipLogFile = { name: equip.logFileName||'', data: equip.logFileData||'' };
-  document.getElementById('tk-eq-photo-situation-preview').innerHTML = equip.photoSituation ? `<img src="${equip.photoSituation}" style="max-width:160px;max-height:120px;border-radius:6px;border:1px solid #ddd;" />` : '';
-  document.getElementById('tk-eq-photo-solution-preview').innerHTML  = equip.photoSolution  ? `<img src="${equip.photoSolution}"  style="max-width:160px;max-height:120px;border-radius:6px;border:1px solid #ddd;" />` : '';
+  document.getElementById('tk-eq-photo-situation-preview').innerHTML = _tkPhotoPreviewHTML(equip.photoSituation);
+  document.getElementById('tk-eq-photo-solution-preview').innerHTML  = _tkPhotoPreviewHTML(equip.photoSolution);
   document.getElementById('tk-eq-photo-situation-filename').textContent = equip.photoSituationName || 'Aucun fichier sélectionné';
   document.getElementById('tk-eq-photo-solution-filename').textContent  = equip.photoSolutionName  || 'Aucun fichier sélectionné';
   document.getElementById('tk-eq-log-filename').textContent = equip.logFileName || 'Aucun fichier joint';
