@@ -6850,6 +6850,7 @@ function runAIExtraction() { _aiRunFileExtraction(); }
     <div style="background:linear-gradient(135deg,#37474f,#546e7a);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
       <div style="font-size:15px;font-weight:700;color:#fff;">🎫 Tickets — incidents, non-conformités, demandes</div>
       <div style="display:flex;gap:8px;">
+        <button onclick="_tkExportJSON()" title="Exporter tous les tickets en fichier JSON" style="background:rgba(255,255,255,0.18);border:none;border-radius:7px;padding:6px 12px;cursor:pointer;color:#fff;font-size:12px;font-weight:700;">⬇ Exporter JSON</button>
         <button onclick="_tkShowNewForm()" style="background:rgba(255,255,255,0.18);border:none;border-radius:7px;padding:6px 12px;cursor:pointer;color:#fff;font-size:12px;font-weight:700;">➕ Nouveau ticket</button>
         <button onclick="closeTicketModal()" style="background:rgba(255,255,255,0.15);border:none;border-radius:7px;padding:5px 9px;cursor:pointer;color:#fff;font-size:16px;">✕</button>
       </div>
@@ -7017,6 +7018,14 @@ function _tkSave(tickets) {
     showToast('❌ Échec de l\'enregistrement (stockage local plein). Réduisez la taille des photos jointes.');
     return false;
   }
+}
+function _tkExportJSON() {
+  const tickets = _tkLoad();
+  if (!tickets.length) { showToast('⚠️ Aucun ticket à exporter.'); return; }
+  const payload = { _type: 'cr-tickets-v1', exportedAt: new Date().toISOString(), tickets };
+  const dateStr = new Date().toISOString().slice(0,10);
+  dlFile(JSON.stringify(payload, null, 2), `tickets_${dateStr}.json`, 'application/json;charset=utf-8');
+  showToast(`✅ ${tickets.length} ticket${tickets.length!==1?'s':''} exporté${tickets.length!==1?'s':''}.`);
 }
 function _tkNextNumber(tickets) {
   const year = new Date().getFullYear();
