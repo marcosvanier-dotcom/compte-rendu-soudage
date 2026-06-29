@@ -28,13 +28,19 @@ L'outil peut utiliser un fournisseur d'IA (Anthropic, OpenAI ou Gemini) pour aid
 
 ## Protection anticopie
 
-Cette version inclut quelques protections basiques côté navigateur pour limiter la copie/extraction du contenu :
+Cette version embarque plusieurs protections côté navigateur destinées à dissuader la copie ou l'extraction occasionnelle du contenu de l'outil :
 
-- Clic droit, sélection de texte et glisser-déposer désactivés hors des champs éditables.
-- Raccourcis `Ctrl+U` (voir la source), `Ctrl+P` (impression directe) et `F12`/`Ctrl+Shift+I`/`Ctrl+Shift+J` (outils de développement) bloqués.
-- Filigrane discret (© Marcos Vanier) affiché en bas de l'écran.
+- **Clic droit désactivé** partout, sauf dans les champs de saisie (formulaires, zones de texte) où il reste nécessaire pour travailler normalement.
+- **Sélection de texte bloquée** en dehors des champs éditables — impossible de sélectionner/copier l'interface elle-même.
+- **Glisser-déposer désactivé**, sauf pour les usages internes autorisés (ex. réorganisation des boutons de la barre d'outils, déplacement d'éléments).
+- **Raccourcis clavier bloqués** :
+  - `Ctrl+U` — affichage du code source de la page.
+  - `Ctrl+P` / `Cmd+P` — impression directe (sauf via les boutons d'export PDF prévus dans l'outil).
+  - `F12`, `Ctrl+Shift+I`, `Ctrl+Shift+J` — ouverture des outils de développement du navigateur.
+- **Menu contextuel du navigateur** (clic droit natif) entièrement supprimé hors zones éditables.
+- **Filigrane discret** (© Marcos Vanier) affiché en permanence en bas à droite de l'écran, visible sur toute capture d'écran.
 
-> ⚠️ Ces protections sont volontairement légères et n'empêchent pas un utilisateur technique déterminé (le code source est entièrement visible côté client, comme pour toute application web). Elles dissuadent la copie occasionnelle, elles ne remplacent pas une protection juridique ou contractuelle.
+> ⚠️ **Limites à connaître :** ces protections s'exécutent entièrement côté client en JavaScript — comme pour toute application web, le code source est techniquement visible et contournable par un utilisateur déterminé (mode sans script, outils externes, etc.). Elles ne remplacent ni un contrat de licence, ni une protection juridique, ni un mécanisme serveur. Leur rôle est de dissuader la copie occasionnelle et non technique, pas d'empêcher un contournement délibéré.
 
 ## Confidentialité
 
