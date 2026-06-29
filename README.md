@@ -1,7 +1,5 @@
 # Générateur de Comptes Rendus
 
-Outil 100% local (HTML standalone) pour la gestion de comptes rendus d'une cellule de soudage industriel (EDF).
-
 ## Comme utiliser
 
 1. Téléchargez le fichier [`ferramenta.html`](ferramenta.html).
