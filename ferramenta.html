@@ -85,6 +85,7 @@ div.item-input:focus { border-color:#90caf9; }
 .s-formation  { border-left: 4px solid #1A237E; }
 .s-autres     { border-left: 4px solid #1A237E; }
 .item-block { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.item-block.item-dragover { outline: 2px dashed #1a237e; outline-offset: 2px; background: #f5f7ff; border-radius: 6px; }
 .comment-area { width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #e0e0e0; border-radius: 6px; background: #fafafa; color: #444; resize: vertical; min-height: 34px; max-height: 120px; font-family: Arial, sans-serif; }
 .comment-area:focus { outline: none; border-color: #90caf9; background: #fff; }
 .comment-area::placeholder { color: #bbb; font-style: italic; }
@@ -1283,7 +1284,10 @@ function renderItemHTML(si, ii, item, sec, statuses, priorities) {
   const pctC = pct===100?'#2e7d32':pct>=50?'#1565c0':'#f57c00';
   const nItems = sec.items.length;
   return `
-    <div class="item-block">
+    <div class="item-block"
+      ondragover="event.preventDefault();event.stopPropagation();this.classList.add('item-dragover')"
+      ondragleave="this.classList.remove('item-dragover')"
+      ondrop="event.preventDefault();event.stopPropagation();this.classList.remove('item-dragover');dropItemFiles(event,${si},${ii})">
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
         <div class="item-input" contenteditable="true"
           data-si="${si}" data-ii="${ii}" data-field="text"
@@ -3797,8 +3801,7 @@ function removeTag(si, ii, tag) {
 }
 
 // ── PIÈCES JOINTES (fichier ou e-mail) ─────────────────────────
-async function attachItemFile(si, ii, input) {
-  const files = Array.from(input.files || []);
+async function _attachFilesToItem(si, ii, files) {
   if (!files.length) return;
   const item = state.sections[si].items[ii];
   if (!item.attachments) item.attachments = [];
@@ -3823,9 +3826,19 @@ async function attachItemFile(si, ii, input) {
       showToast(`⚠️ Impossible de joindre "${file.name}".`);
     }
   }
-  input.value = '';
   autosave();
   render();
+}
+async function attachItemFile(si, ii, input) {
+  const files = Array.from(input.files || []);
+  await _attachFilesToItem(si, ii, files);
+  input.value = '';
+}
+async function dropItemFiles(event, si, ii) {
+  const files = Array.from(event.dataTransfer?.files || []);
+  if (!files.length) return;
+  await _attachFilesToItem(si, ii, files);
+  showToast(`✅ ${files.length} pièce${files.length!==1?'s':''} jointe${files.length!==1?'s':''}.`);
 }
 function removeItemAttachment(si, ii, idx) {
   const item = state.sections[si].items[ii];
