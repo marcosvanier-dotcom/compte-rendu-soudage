@@ -349,7 +349,7 @@ body.compact [id^="rtf-"] { display:none; }
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
       <p style="font-size:15px;font-weight:700;color:#1a237e;">👥 Résumé par responsable</p>
       <div style="display:flex;gap:5px;align-items:center;">
-        <select id="resp-export-scope" style="padding:4px 8px;font-size:11px;border:1px solid #e0e0e0;border-radius:6px;color:#444;">
+        <select id="resp-export-scope" onchange="filterResponsablesByScope(this.value)" style="padding:4px 8px;font-size:11px;border:1px solid #e0e0e0;border-radius:6px;color:#444;">
           <option value="all">Tous</option>
         </select>
         <button onclick="exportRespPDF()" style="padding:4px 10px;font-size:11px;background:#fce4ec;border:1px solid #f48fb1;color:#880e4f;border-radius:6px;cursor:pointer;">⬇ PDF</button>
@@ -4117,15 +4117,15 @@ function updateRespScopeDropdown(query) {
     names.map(n => `<option value="${escHtml(n)}">${escHtml(n)}</option>`).join('');
 }
 
-function renderResponsables(query) {
+function renderResponsables(query, exactName) {
   const list     = document.getElementById("resp-list");
   const statuses = t("statuses");
   const q        = query.toLowerCase().trim();
   const filtered = Object.entries(_respMap)
-    .filter(([name]) => !q || name.toLowerCase().includes(q))
+    .filter(([name]) => exactName ? name === exactName : (!q || name.toLowerCase().includes(q)))
     .sort((a,b) => b[1].total - a[1].total);
 
-  updateRespScopeDropdown(query);
+  if (!exactName) updateRespScopeDropdown(query);
 
   if (!filtered.length) {
     list.innerHTML = `<p style="color:#aaa;text-align:center;padding:20px;">Aucun résultat</p>`;
@@ -4157,6 +4157,15 @@ function renderResponsables(query) {
 
 function filterResponsables(query) {
   renderResponsables(query);
+}
+function filterResponsablesByScope(value) {
+  const searchEl = document.getElementById("resp-search");
+  if (value === "all") {
+    renderResponsables(searchEl ? searchEl.value : "");
+  } else {
+    if (searchEl) searchEl.value = "";
+    renderResponsables("", value);
+  }
 }
 
 // ── CALENDAR VIEW ─────────────────────────────────────────────
