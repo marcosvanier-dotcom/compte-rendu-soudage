@@ -5416,8 +5416,8 @@ function navigateToItem(si, ii) {
   // Reset any active filters
   activeFilter = null;
   render();
-  // Expand the section
-  collapsed[state.sections[si].id] = false;
+  // Expand only the target section, collapse all others
+  state.sections.forEach((sec, s) => { collapsed[sec.id] = (s !== si); });
   render();
   // Scroll to item after render
   setTimeout(() => {
