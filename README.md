@@ -2,7 +2,7 @@
 
 ## Comme utiliser
 
-1. Téléchargez le fichier [`ferramenta.html`](ferramenta.html).
+1. Téléchargez le fichier [`couteau_suisse.htm`](couteau_suisse.htm).
 2. Ouvrez-le directement dans votre navigateur (double-clic ou `Fichier > Ouvrir`).
 3. Toutes les données sont sauvegardées localement dans le `localStorage` de votre navigateur — il n'y a pas de backend, pas de connexion, pas de serveur.
 
