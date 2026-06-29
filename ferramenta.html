@@ -1283,8 +1283,8 @@ function renderItemHTML(si, ii, item, sec, statuses, priorities) {
           data-si="${si}" data-ii="${ii}" data-field="text"
           data-placeholder="${lang==='pt'?'Description...':'Description...'}"
           style="flex:1;min-height:32px;line-height:1.5;cursor:text;"
-          oninput="updateItem(${si},${ii},'text',this.innerText.replace(/\n/g,' ').trim())"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();updateItem(${si},${ii},'text',this.innerText.replace(/\n/g,' ').trim());render();autosave();}"
+          oninput="updateItem(${si},${ii},'text',this.innerText.replace(/\\n/g,' ').trim())"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();updateItem(${si},${ii},'text',this.innerText.replace(/\\n/g,' ').trim());render();autosave();}"
           onmouseup="showFloatingToolbar(event,${si},${ii})"
           onkeyup="showFloatingToolbar(event,${si},${ii})"
         >${escHtml(item.text)}</div>
