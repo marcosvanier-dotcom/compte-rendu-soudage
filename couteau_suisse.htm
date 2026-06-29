@@ -5411,13 +5411,10 @@ async function _syncDailyBackupFromBackend() {
 window._lastRTF = null;
 
 // ── RICH TEXT EDITOR ──────────────────────────────────────────
-let _rtfSi = null, _rtfIi = null;
+let _rtfSi = null, _rtfIi = null, _rtfMode = 'item';
 
-function showFloatingToolbar(e, si, ii) {
-  _rtfSi = si; _rtfIi = ii;
+function _rtfPositionToolbar(el) {
   const toolbar = document.getElementById("floating-toolbar");
-  const el = document.getElementById("rtf-"+si+"-"+ii);
-  if (!el) return;
   toolbar.style.display = "flex";
   const rect = el.getBoundingClientRect();
   const tx = Math.min(rect.left, window.innerWidth - 320);
@@ -5425,23 +5422,51 @@ function showFloatingToolbar(e, si, ii) {
   toolbar.style.top  = (rect.top + window.scrollY - 46) + "px";
 }
 
+function showFloatingToolbar(e, si, ii) {
+  _rtfMode = 'item';
+  _rtfSi = si; _rtfIi = ii;
+  const el = document.getElementById("rtf-"+si+"-"+ii);
+  if (!el) return;
+  _rtfPositionToolbar(el);
+}
+
+function showTicketDescToolbar() {
+  _rtfMode = 'ticket';
+  const el = document.getElementById('tk-input-desc');
+  if (!el) return;
+  _rtfPositionToolbar(el);
+}
+
 function hideFloatingToolbar() {
   const t = document.getElementById("floating-toolbar");
   if (t) t.style.display = "none";
 }
 
+function _rtfActiveEl() {
+  if (_rtfMode === 'ticket') return document.getElementById('tk-input-desc');
+  return (_rtfSi!==null && _rtfIi!==null) ? document.getElementById('rtf-'+_rtfSi+'-'+_rtfIi) : document.activeElement;
+}
+
 function rtfFontSize(size) {
-  const el = (_rtfSi!==null && _rtfIi!==null) ? document.getElementById('rtf-'+_rtfSi+'-'+_rtfIi) : document.activeElement;
-  if (el) { el.focus(); document.execCommand('fontSize', false, size); updateItemRTF(_rtfSi,_rtfIi,el,'comment'); autosave(); }
+  const el = _rtfActiveEl();
+  if (el) {
+    el.focus(); document.execCommand('fontSize', false, size);
+    if (_rtfMode !== 'ticket') { updateItemRTF(_rtfSi,_rtfIi,el,'comment'); autosave(); }
+  }
 }
 function rtfColor(color) {
-  const el = (_rtfSi!==null && _rtfIi!==null) ? document.getElementById('rtf-'+_rtfSi+'-'+_rtfIi) : document.activeElement;
-  if (el) { el.focus(); document.execCommand('foreColor', false, color); updateItemRTF(_rtfSi,_rtfIi,el,'comment'); autosave(); }
+  const el = _rtfActiveEl();
+  if (el) {
+    el.focus(); document.execCommand('foreColor', false, color);
+    if (_rtfMode !== 'ticket') { updateItemRTF(_rtfSi,_rtfIi,el,'comment'); autosave(); }
+  }
 }
 function rtfExec(cmd, val) {
   document.execCommand(cmd, false, val || null);
   const active = document.activeElement;
-  if (active && active.contentEditable === 'true' && active.dataset.si !== undefined) {
+  if (active && active.id === 'tk-input-desc') {
+    // Le contenu sera lu directement dans le formulaire ticket — rien à persister ici.
+  } else if (active && active.contentEditable === 'true' && active.dataset.si !== undefined) {
     const si    = parseInt(active.dataset.si);
     const ii    = parseInt(active.dataset.ii);
     const field = active.dataset.field || 'comment';
@@ -5452,7 +5477,7 @@ function rtfExec(cmd, val) {
       updateItemRTF(si, ii, active, field);
     }
     autosave();
-  } else if (_rtfSi !== null && _rtfIi !== null) {
+  } else if (_rtfMode !== 'ticket' && _rtfSi !== null && _rtfIi !== null) {
     const el = document.getElementById(`rtf-${_rtfSi}-${_rtfIi}`);
     if (el) updateItemRTF(_rtfSi, _rtfIi, el, 'comment');
   }
@@ -6997,7 +7022,9 @@ function importAIItems() {
         </div>
         <div class="tk-field">
           <label>Description</label>
-          <textarea id="tk-input-desc" rows="4" placeholder="Détails du problème ou de la demande..."></textarea>
+          <div id="tk-input-desc" contenteditable="true" data-placeholder="Détails du problème ou de la demande..."
+            style="min-height:80px;max-height:240px;overflow-y:auto;padding:8px 10px;font-size:12px;border:1px solid #ddd;border-radius:6px;font-family:inherit;background:#fff;outline:none;color:#333;line-height:1.6;"
+            onmouseup="showTicketDescToolbar()" onkeyup="showTicketDescToolbar()"></div>
         </div>
         <div style="display:flex;gap:10px;">
           <div class="tk-field" style="flex:1;">
@@ -7429,7 +7456,7 @@ function _tkExportFicheExcel() {
 function _tkBuildGenericTicketTables() {
   const title = document.getElementById('tk-input-title').value.trim() || '(sans titre)';
   const type = document.getElementById('tk-input-type').value;
-  const desc = document.getElementById('tk-input-desc').value.trim();
+  const desc = document.getElementById('tk-input-desc').innerHTML.trim();
   const priority = document.getElementById('tk-input-priority').value;
   const status = document.getElementById('tk-input-status').value;
   const site = document.getElementById('tk-input-linked').value.trim();
@@ -7446,7 +7473,7 @@ function _tkBuildGenericTicketTables() {
   <tr><td class="lbl">Priorité</td><td>${escHtml(TK_PRIORITY_LABELS[priority]||priority)}</td><td class="lbl">Statut</td><td>${escHtml(TK_STATUS_LABELS[status]||status)}</td></tr>
   </table>
   <table><tr><td class="hdr" colspan="2">Description</td></tr>
-  <tr><td>${escHtml(desc).replace(/\n/g,'<br>') || '—'}</td></tr>
+  <tr><td>${desc || '—'}</td></tr>
   </table>
   <table><tr><td class="hdr" colspan="4">Prise en compte et solde de la demande</td></tr>
   <tr><td class="lbl">Prise en compte cellule technique ou chef soudeur</td><td>${escHtml(priseEnCompte)}</td><td class="lbl">Date/heure</td><td>${priseDate ? new Date(priseDate).toLocaleString('fr-FR') : ''}</td></tr>
@@ -7501,7 +7528,7 @@ function _tkShowNewForm() {
   document.getElementById('tk-form-view').style.display = 'block';
   document.getElementById('tk-input-type').value = 'incident';
   document.getElementById('tk-input-title').value = '';
-  document.getElementById('tk-input-desc').value = '';
+  document.getElementById('tk-input-desc').innerHTML = '';
   document.getElementById('tk-input-priority').value = 'normale';
   document.getElementById('tk-input-status').value = 'ouvert';
   document.getElementById('tk-input-linked').value = '';
@@ -7520,7 +7547,7 @@ function _tkEditTicket(id) {
   document.getElementById('tk-form-view').style.display = 'block';
   document.getElementById('tk-input-type').value = ticket.type || 'incident';
   document.getElementById('tk-input-title').value = ticket.title || '';
-  document.getElementById('tk-input-desc').value = ticket.description || '';
+  document.getElementById('tk-input-desc').innerHTML = ticket.description || '';
   document.getElementById('tk-input-priority').value = ticket.priority || 'normale';
   document.getElementById('tk-input-status').value = ticket.status || 'ouvert';
   document.getElementById('tk-input-linked').value = ticket.site || '';
@@ -7570,7 +7597,7 @@ function _tkSaveTicket() {
     if (!ticket) return;
     ticket.type = document.getElementById('tk-input-type').value;
     ticket.title = title;
-    ticket.description = document.getElementById('tk-input-desc').value.trim();
+    ticket.description = document.getElementById('tk-input-desc').innerHTML.trim();
     ticket.priority = document.getElementById('tk-input-priority').value;
     const newStatus = document.getElementById('tk-input-status').value;
     if (newStatus !== ticket.status) {
@@ -7593,7 +7620,7 @@ function _tkSaveTicket() {
       number: _tkNextNumber(tickets),
       type,
       title,
-      description: document.getElementById('tk-input-desc').value.trim(),
+      description: document.getElementById('tk-input-desc').innerHTML.trim(),
       priority: document.getElementById('tk-input-priority').value,
       status: document.getElementById('tk-input-status').value,
       site: type === 'equipement-degrade' ? undefined : site,
