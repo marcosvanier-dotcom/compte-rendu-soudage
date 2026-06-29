@@ -46,3 +46,7 @@ Cette version embarque plusieurs protections côté navigateur destinées à dis
 
 - Aucune donnée n'est envoyée à un serveur tiers, sauf lors d'un appel explicite à l'API d'un fournisseur d'IA que vous avez configuré vous-même.
 - Aucun compte, aucune authentification requise.
+
+## Droits d'auteur
+
+© Marco Vanier — Tous droits réservés. Ce dépôt est public à titre de démonstration uniquement ; il ne constitue pas une autorisation d'utilisation, de copie ou de redistribution du code. Voir le fichier [LICENSE](LICENSE) pour les conditions complètes.
