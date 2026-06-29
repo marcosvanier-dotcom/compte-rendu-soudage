@@ -2677,12 +2677,16 @@ function updateStats() {
   Object.keys(t("priorities")).forEach(k => prioCount[k]=0);
   allItems.forEach(i => { if(prioCount[i.priority]!==undefined) prioCount[i.priority]++; });
 
-  // ── Responsables ──
+  // ── Responsables (ligne principale + sous-lignes) ──
   const respMap = {};
-  allItems.filter(i => i.responsable&&i.responsable.trim()).forEach(i => {
-    const raw = i.responsable.trim();
-    const r = raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
+  const _countResp = raw => {
+    if (!raw || !raw.trim()) return;
+    const r = raw.trim().charAt(0).toUpperCase() + raw.trim().slice(1).toLowerCase();
     respMap[r] = (respMap[r]||0) + 1;
+  };
+  allItems.forEach(i => {
+    _countResp(i.responsable);
+    (i.subrows||[]).forEach(sr => _countResp(sr.responsable));
   });
 
   // ── Tags ──
@@ -2738,10 +2742,11 @@ function updateStats() {
 
   // ── Tag chips — removed ──
 
-  // ── Site chips ──
+  // ── Site chips (ligne principale + sous-lignes) ──
   const siteMap = {};
-  allItems.filter(i => i.site && i.site.trim()).forEach(i => {
-    siteMap[i.site] = (siteMap[i.site]||0) + 1;
+  allItems.forEach(i => {
+    if (i.site && i.site.trim()) siteMap[i.site] = (siteMap[i.site]||0) + 1;
+    (i.subrows||[]).forEach(sr => { if (sr.site && sr.site.trim()) siteMap[sr.site] = (siteMap[sr.site]||0) + 1; });
   });
   let siteHtml = Object.entries(siteMap).sort((a,b)=>b[1]-a[1]).map(([site,v]) =>
     `<span class="stat-chip" onclick="filterBySite('${escHtml(site)}')" title="Filtrer par site">
