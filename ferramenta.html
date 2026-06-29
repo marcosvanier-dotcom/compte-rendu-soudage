@@ -1276,6 +1276,9 @@ function renderItemHTML(si, ii, item, sec, statuses, priorities) {
   const tagsHtml = (item.tags||[]).map(tag =>
     `<span style="font-size:10px;background:#e8eaf6;color:#1a237e;border-radius:10px;padding:1px 8px;cursor:pointer;" onclick="removeTag(${si},${ii},'${escHtml(tag)}')" title="Retirer">🏷 ${escHtml(tag)} ✕</span>`
   ).join('');
+  const attachHtml = (item.attachments||[]).map((a,ai) =>
+    `<span style="font-size:10px;background:#fff3e0;color:#e65100;border-radius:10px;padding:1px 8px;cursor:pointer;" onclick="openItemAttachment(${si},${ii},${ai})" title="Cliquer pour ouvrir">📎 ${escHtml(a.name)} <span onclick="event.stopPropagation();removeItemAttachment(${si},${ii},${ai})" title="Retirer">✕</span></span>`
+  ).join('');
   const pct  = item.pct??0;
   const pctC = pct===100?'#2e7d32':pct>=50?'#1565c0':'#f57c00';
   const nItems = sec.items.length;
@@ -1340,6 +1343,8 @@ function renderItemHTML(si, ii, item, sec, statuses, priorities) {
           onkeydown="if(event.key==='Enter'){event.preventDefault();event.stopPropagation();if(this.value.trim()){addTag(${si},${ii},this.value.trim());this.value='';this.focus();}}" />
         ${daysLabel} ${dueDateAlert}
         <div style="display:flex;gap:3px;flex-shrink:0;margin-left:auto;">
+          <button onclick="document.getElementById('item-attach-${si}-${ii}').click()" title="Joindre un fichier ou un e-mail (.eml/.msg)" style="background:none;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:12px;padding:3px 6px;color:${(item.attachments&&item.attachments.length)?'#1a237e':'#888'};">📎${(item.attachments&&item.attachments.length)?' '+item.attachments.length:''}</button>
+          <input type="file" id="item-attach-${si}-${ii}" multiple accept=".eml,.msg,.pdf,.jpg,.jpeg,.png,.gif,.txt,.doc,.docx,.xls,.xlsx" style="display:none;" onchange="attachItemFile(${si},${ii},this)" />
           <button onclick="duplicateItemFull(${si},${ii})" title="Dupliquer l'élément complet" style="background:none;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:13px;padding:3px 6px;color:#888;">⧉</button>
           <button onclick="addSubrow(${si},${ii})" title="Ajouter une ligne supplémentaire" style="background:none;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:11px;padding:3px 6px;color:#9fa8da;">+ ≡</button>
           <button onclick="moveItemPrompt(${si},${ii})" title="${lang==='fr'?'Déplacer vers...':'Déplacer vers...'}" style="background:none;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-size:13px;padding:3px 6px;color:#888;">↗</button>
@@ -1364,6 +1369,7 @@ function renderItemHTML(si, ii, item, sec, statuses, priorities) {
         </div>
       </div>
       ${tagsHtml?`<div class="item-tags-container" data-si="${si}" data-ii="${ii}" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">${tagsHtml}</div>`:`<div class="item-tags-container" data-si="${si}" data-ii="${ii}" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;"></div>`}
+      ${attachHtml?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">${attachHtml}</div>`:''}
       ${(item.subrows&&item.subrows.length)?item.subrows.map((sr,sri)=>`
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px;padding:4px 8px;background:#f5f7ff;border-left:3px solid #c5cae9;border-radius:0 6px 6px 0;">
         <input type="text" value="${escHtml(sr.responsable||'')}" placeholder="👤 Responsable..."
@@ -3788,6 +3794,54 @@ function removeTag(si, ii, tag) {
       savedAt: new Date().toISOString() };
     localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(session));
   } catch(e) {}
+}
+
+// ── PIÈCES JOINTES (fichier ou e-mail) ─────────────────────────
+async function attachItemFile(si, ii, input) {
+  const files = Array.from(input.files || []);
+  if (!files.length) return;
+  const item = state.sections[si].items[ii];
+  if (!item.attachments) item.attachments = [];
+  for (const file of files) {
+    try {
+      if (file.size > 15*1024*1024) { showToast(`⚠️ "${file.name}" trop volumineux (max 15 Mo).`); continue; }
+      let data;
+      if (/^image\//.test(file.type)) {
+        data = await _tkCompressImage(file, 1280, 0.7);
+        if (data.length > 900*1024) { showToast(`⚠️ "${file.name}" reste trop lourde même compressée, ignorée.`); continue; }
+      } else {
+        if (file.size > 800*1024) { showToast(`⚠️ "${file.name}" trop lourd (max ~800 Ko pour ce type de fichier).`); continue; }
+        data = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = e => resolve(e.target.result);
+          reader.onerror = () => reject(new Error('Lecture impossible'));
+          reader.readAsDataURL(file);
+        });
+      }
+      item.attachments.push({ name: file.name, type: file.type, data });
+    } catch(e) {
+      showToast(`⚠️ Impossible de joindre "${file.name}".`);
+    }
+  }
+  input.value = '';
+  autosave();
+  render();
+}
+function removeItemAttachment(si, ii, idx) {
+  const item = state.sections[si].items[ii];
+  if (!item.attachments) return;
+  item.attachments.splice(idx, 1);
+  autosave();
+  render();
+}
+function openItemAttachment(si, ii, idx) {
+  const a = state.sections[si].items[ii].attachments?.[idx];
+  if (!a) return;
+  if (/^image\//.test(a.type)) {
+    _tkOpenImage(a.data);
+  } else {
+    dlFile(Uint8Array.from(atob(a.data.split(',')[1]), c => c.charCodeAt(0)), a.name, a.type || 'application/octet-stream');
+  }
 }
 
 function updateTagsDisplay(si, ii) {
