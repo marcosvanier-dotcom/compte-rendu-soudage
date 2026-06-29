@@ -4106,6 +4106,7 @@ function openResponsableView() {
   });
   const searchEl = document.getElementById("resp-search");
   if (searchEl) searchEl.value = "";
+  _respExpanded = null;
   renderResponsables("");
   modal.style.display = "flex";
 }
@@ -4119,10 +4120,16 @@ function updateRespScopeDropdown(query) {
     names.map(n => `<option value="${escHtml(n)}">${escHtml(n)}</option>`).join('');
 }
 
+let _respLastQuery = "";
+let _respLastExact = null;
+let _respExpanded = null;
+
 function renderResponsables(query, exactName) {
+  _respLastQuery = query || "";
+  _respLastExact = exactName || null;
   const list     = document.getElementById("resp-list");
   const statuses = t("statuses");
-  const q        = query.toLowerCase().trim();
+  const q        = (query||"").toLowerCase().trim();
   const filtered = Object.entries(_respMap)
     .filter(([name]) => exactName ? name === exactName : (!q || name.toLowerCase().includes(q)))
     .sort((a,b) => b[1].total - a[1].total);
@@ -4138,25 +4145,33 @@ function renderResponsables(query, exactName) {
     const avgPct = Math.round(data.pctSum / data.total);
     const pctC   = avgPct===100?'#2e7d32':avgPct>=50?'#1565c0':'#f57c00';
     const singleItem = data.items.length === 1 ? data.items[0] : null;
-    const cardClick = singleItem ? `onclick="closeRespModalAndNavigate(${singleItem._si},${singleItem._ii})" title="Cliquer pour accéder à cet élément"` : '';
-    return `<div ${cardClick} style="border:1px solid #e8eaf6;border-radius:10px;padding:12px 14px;margin-bottom:10px;${singleItem?'cursor:pointer;':''}">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <span style="font-weight:700;color:#1a237e;font-size:13px;">👤 ${escHtml(name)}</span>
+    const isOpen = singleItem ? false : (_respExpanded === name);
+    const headerClick = singleItem
+      ? `closeRespModalAndNavigate(${singleItem._si},${singleItem._ii})`
+      : `toggleRespCard('${escHtml(name).replace(/'/g,"\\'")}')`;
+    return `<div style="border:1px solid #e8eaf6;border-radius:10px;padding:12px 14px;margin-bottom:10px;">
+      <div onclick="${headerClick}" title="${singleItem?'Cliquer pour accéder à cet élément':'Cliquer pour déplier/replier'}" style="display:flex;justify-content:space-between;align-items:center;${data.items.length?'margin-bottom:8px;':''}cursor:pointer;">
+        <span style="font-weight:700;color:#1a237e;font-size:13px;">👤 ${escHtml(name)} ${!singleItem?(isOpen?'▾':'▸'):''}</span>
         <div style="display:flex;align-items:center;gap:10px;">
           <span style="font-size:11px;color:#888;">${data.done}/${data.total} terminé(s)</span>
           <span style="font-weight:700;color:${pctC};font-size:13px;">${avgPct}%</span>
         </div>
       </div>
-      <div style="background:#eee;border-radius:4px;height:5px;margin-bottom:8px;overflow:hidden;">
+      <div style="background:#eee;border-radius:4px;height:5px;margin-bottom:${isOpen||singleItem?'8px':'0'};overflow:hidden;">
         <div style="height:5px;border-radius:4px;background:${pctC};width:${avgPct}%;"></div>
       </div>
-      ${data.items.map(i=>`<div onclick="closeRespModalAndNavigate(${i._si},${i._ii})" title="Cliquer pour accéder à cet élément" style="font-size:11px;color:#555;padding:3px 0;border-bottom:1px solid #f5f5f5;cursor:pointer;">
+      ${isOpen ? data.items.map(i=>`<div onclick="closeRespModalAndNavigate(${i._si},${i._ii})" title="Cliquer pour accéder à cet élément" style="font-size:11px;color:#555;padding:3px 0;border-bottom:1px solid #f5f5f5;cursor:pointer;">
         • ${escHtml(i.text.trim())} — <span style="color:#888;">${statuses[i.status]||i.status}</span>
         ${i.site?`<span style="color:#888;"> · 📍 ${i.site}</span>`:''}
         ${i.dueDate?`<span style="color:#888;"> · 📅 ${i.dueDate}</span>`:''}
-      </div>`).join('')}
+      </div>`).join('') : ''}
     </div>`;
   }).join('');
+}
+
+function toggleRespCard(name) {
+  _respExpanded = (_respExpanded === name) ? null : name;
+  renderResponsables(_respLastQuery, _respLastExact);
 }
 
 function filterResponsables(query) {
