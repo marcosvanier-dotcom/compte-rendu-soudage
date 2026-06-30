@@ -1000,6 +1000,7 @@ body.compact [id^="rtf-"] { display:none; }
       <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="chk-sections" checked> <span id="chk-lbl-sections">Avancement</span></label>
       <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="chk-status" checked> <span id="chk-lbl-status">États</span></label>
       <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="chk-priority" checked> <span id="chk-lbl-priority">Priorités</span></label>
+      <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="chk-tickets" checked> <span id="chk-lbl-tickets">Tickets</span></label>
       <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
         <button onclick="exportHistoPNG()" style="padding:5px 12px;font-size:12px;background:#e8f0fe;border:1px solid #aac4f5;color:#1a56c4;border-radius:6px;cursor:pointer;font-weight:500;">⬇ PNG</button>
         <button onclick="exportHistoPDF()" style="padding:5px 12px;font-size:12px;background:#fce4ec;border:1px solid #f48fb1;color:#880e4f;border-radius:6px;cursor:pointer;font-weight:500;">⬇ PDF</button>
@@ -1012,6 +1013,10 @@ body.compact [id^="rtf-"] { display:none; }
     <div class="chart-wrap2"><canvas id="chart-status"></canvas></div>
     <p class="modal-section-title" id="histo-sub3">Répartition des priorités</p>
     <div class="chart-wrap2"><canvas id="chart-priority"></canvas></div>
+    <p class="modal-section-title" id="histo-sub4">🎫 Tickets — État</p>
+    <div class="chart-wrap2"><canvas id="chart-tickets-status"></canvas></div>
+    <p class="modal-section-title" id="histo-sub5">🎫 Tickets — Type</p>
+    <div class="chart-wrap"><canvas id="chart-tickets-type"></canvas></div>
   </div>
 </div>
 
@@ -1120,7 +1125,7 @@ const I18N = {
 let lang = "fr";
 let state = { sections: buildSections("fr") };
 const collapsed = {};
-let chartSections = null, chartStatus = null, chartPriority = null;
+let chartSections = null, chartStatus = null, chartPriority = null, chartTicketsStatus = null, chartTicketsType = null;
 
 function buildSections(l) {
   return I18N[l].sections.map(s => ({ ...s, items: [] }));
@@ -2105,9 +2110,14 @@ function openHistogram() {
   modal.classList.add("open");
 
   // Destroy old charts
-  if (chartSections) { chartSections.destroy(); chartSections = null; }
-  if (chartStatus)   { chartStatus.destroy();   chartStatus = null; }
-  if (chartPriority) { chartPriority.destroy(); chartPriority = null; }
+  if (chartSections)      { chartSections.destroy();      chartSections = null; }
+  if (chartStatus)        { chartStatus.destroy();        chartStatus = null; }
+  if (chartPriority)      { chartPriority.destroy();      chartPriority = null; }
+  if (chartTicketsStatus) { chartTicketsStatus.destroy(); chartTicketsStatus = null; }
+  if (chartTicketsType)   { chartTicketsType.destroy();   chartTicketsType = null; }
+
+  document.getElementById('histo-sub4').textContent = '🎫 Tickets — État';
+  document.getElementById('histo-sub5').textContent = '🎫 Tickets — Type';
 
   // Chart 1 — section progress
   const secLabels = state.sections.map(s => s.emoji + " " + s.label);
@@ -2162,6 +2172,50 @@ function openHistogram() {
     }]
   });
 
+  // Chart 4 & 5 — tickets
+  const _tkAll = JSON.parse(localStorage.getItem('cr-tickets-v1') || '[]');
+  const TK_STATUS_MAP = { ouvert:"🔴 Ouvert", "en-cours":"🟡 En cours", resolu:"🟢 Résolu", ferme:"⚫ Fermé" };
+  const TK_TYPE_MAP   = { incident:"Incident", nonconformite:"Non-conformité", demande:"Demande", situation:"Sit. dégradée" };
+  const tkStatusCounts = { ouvert:0, "en-cours":0, resolu:0, ferme:0 };
+  const tkTypeCounts   = { incident:0, nonconformite:0, demande:0, situation:0 };
+  _tkAll.forEach(tk => {
+    const s = tk.statut || 'ouvert';
+    if (tkStatusCounts[s] !== undefined) tkStatusCounts[s]++;
+    const tp = tk.type || 'incident';
+    if (tkTypeCounts[tp] !== undefined) tkTypeCounts[tp]++;
+  });
+
+  const tkStLbls  = Object.keys(tkStatusCounts).filter(k => tkStatusCounts[k] > 0).map(k => TK_STATUS_MAP[k]);
+  const tkStData  = Object.keys(tkStatusCounts).filter(k => tkStatusCounts[k] > 0).map(k => tkStatusCounts[k]);
+  const tkStColors= ['#b71c1c','#e65100','#2e7d32','#555'];
+  chartTicketsStatus = new Chart(document.getElementById("chart-tickets-status"), {
+    type: "doughnut",
+    data: { labels: tkStLbls, datasets: [{ data: tkStData, backgroundColor: tkStColors.slice(0, tkStLbls.length), borderWidth:2 }] },
+    options: { animation:false, responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'right' }, tooltip:{ callbacks:{ label: ctx => ctx.label+': '+ctx.parsed+' ('+Math.round(ctx.parsed/(tkStData.reduce((a,b)=>a+b,0)||1)*100)+'%)' } } }
+    },
+    plugins: [{ id:'tkStPct', afterDatasetDraw(chart) {
+      const { ctx, data } = chart; const total = data.datasets[0].data.reduce((a,b)=>a+b,0) || 1;
+      chart.getDatasetMeta(0).data.forEach((arc, i) => {
+        const pct = Math.round(data.datasets[0].data[i]/total*100); if (pct < 5) return;
+        const angle = (arc.startAngle+arc.endAngle)/2, r = (arc.innerRadius+arc.outerRadius)/2;
+        ctx.save(); ctx.fillStyle='#fff'; ctx.font='bold 12px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText(pct+'%', arc.x+Math.cos(angle)*r, arc.y+Math.sin(angle)*r); ctx.restore();
+      });
+    }}]
+  });
+
+  const tkTpLbls  = Object.keys(tkTypeCounts).filter(k => tkTypeCounts[k] > 0).map(k => TK_TYPE_MAP[k]);
+  const tkTpData  = Object.keys(tkTypeCounts).filter(k => tkTypeCounts[k] > 0).map(k => tkTypeCounts[k]);
+  const tkTpColors= tkTpData.map((_, i) => ['#3949ab','#e65100','#2e7d32','#6a1b9a'][i % 4]);
+  chartTicketsType = new Chart(document.getElementById("chart-tickets-type"), {
+    type: "bar",
+    data: { labels: tkTpLbls, datasets: [{ label: "Tickets", data: tkTpData, backgroundColor: tkTpColors, borderRadius: 6 }] },
+    options: { animation:false, responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, ticks:{ stepSize:1 } } }
+    }
+  });
+
   // Chart 3 — priority distribution
   const prioMap = t("priorities");
   const prioCounts = {};
@@ -2211,9 +2265,11 @@ function closeHistogram() {
 
 function getSelectedCharts() {
   const list = [];
-  if (document.getElementById("chk-sections").checked) list.push({ id:"chart-sections", title: t("histoSub1") });
-  if (document.getElementById("chk-status").checked)   list.push({ id:"chart-status",   title: t("histoSub2") });
-  if (document.getElementById("chk-priority").checked) list.push({ id:"chart-priority", title: t("histoSub3") });
+  if (document.getElementById("chk-sections").checked) list.push({ id:"chart-sections",       title: t("histoSub1") });
+  if (document.getElementById("chk-status").checked)   list.push({ id:"chart-status",         title: t("histoSub2") });
+  if (document.getElementById("chk-priority").checked) list.push({ id:"chart-priority",       title: t("histoSub3") });
+  if (document.getElementById("chk-tickets").checked)  list.push({ id:"chart-tickets-status", title: "🎫 Tickets — État" },
+                                                                   { id:"chart-tickets-type",  title: "🎫 Tickets — Type" });
   return list;
 }
 
