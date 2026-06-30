@@ -978,7 +978,7 @@ body.compact [id^="rtf-"] { display:none; }
           style="padding:5px 14px;font-size:12px;border:1px solid #c5cae9;border-radius:6px;cursor:pointer;background:#f0f0f0;color:#333;font-weight:600;">
           ⭐ Par priorité
         </button>
-        <button onclick="closeKanban();openTicketModal()" style="padding:5px 12px;font-size:11px;background:#fff8e1;border:1px solid #ffe082;color:#e65100;border-radius:6px;cursor:pointer;font-weight:600;">🎫 Tickets</button>
+        <button id="kb-btn-tickets" onclick="setKanbanView('tickets')" style="padding:5px 14px;font-size:12px;border:1px solid #ffe082;border-radius:6px;cursor:pointer;background:#fff8e1;color:#e65100;font-weight:600;">🎫 Tickets</button>
         <button onclick="exportKanbanPDF()" style="padding:5px 12px;font-size:11px;background:#fce4ec;border:1px solid #f48fb1;color:#ad1457;border-radius:6px;cursor:pointer;font-weight:600;margin-left:12px;">⬇ PDF</button>
         <button onclick="exportKanbanWord()" style="padding:5px 12px;font-size:11px;background:#e3f2fd;border:1px solid #90caf9;color:#0d47a1;border-radius:6px;cursor:pointer;font-weight:600;">⬇ Word</button>
         <button onclick="exportKanbanExcel()" style="padding:5px 12px;font-size:11px;background:#e8f5e9;border:1px solid #a5d6a7;color:#2e7d32;border-radius:6px;cursor:pointer;font-weight:600;">⬇ Excel</button>
@@ -5653,7 +5653,7 @@ let kanbanView = "status"; // "status" or "priority"
 
 function openKanban() {
   document.getElementById("kanban-modal").classList.add("open");
-  renderKanban();
+  setKanbanView(kanbanView);
 }
 function closeKanban() {
   document.getElementById("kanban-modal").classList.remove("open");
@@ -5665,10 +5665,75 @@ function setKanbanView(v) {
   document.getElementById("kb-btn-status").style.color        = v==="status"   ? "#fff"    : "#333";
   document.getElementById("kb-btn-priority").style.background = v==="priority" ? "#1a237e" : "#f0f0f0";
   document.getElementById("kb-btn-priority").style.color      = v==="priority" ? "#fff"    : "#333";
+  document.getElementById("kb-btn-tickets").style.background  = v==="tickets"  ? "#e65100" : "#fff8e1";
+  document.getElementById("kb-btn-tickets").style.color       = v==="tickets"  ? "#fff"    : "#e65100";
   renderKanban();
 }
 
+function renderKanbanTickets() {
+  const board = document.getElementById("kanban-board");
+  board.innerHTML = "";
+  board.style.gridTemplateColumns = "repeat(4,1fr)";
+
+  const tickets = JSON.parse(localStorage.getItem('cr-tickets-v1') || '[]');
+
+  const TK_COLS = [
+    { key: "ouvert",   label: "Ouvert",    icon: "🔴", bg: "#ffebee", fg: "#b71c1c", countBg: "#b71c1c" },
+    { key: "en-cours", label: "En cours",  icon: "🟡", bg: "#fff8e1", fg: "#e65100", countBg: "#e65100" },
+    { key: "resolu",   label: "Résolu",    icon: "🟢", bg: "#e8f5e9", fg: "#2e7d32", countBg: "#2e7d32" },
+    { key: "ferme",    label: "Fermé",     icon: "⚫", bg: "#f5f5f5", fg: "#555",    countBg: "#888"    },
+  ];
+
+  const TK_TYPE_LABEL = { incident:"Incident", nonconformite:"Non-conformité", demande:"Demande", situation:"Sit. dégradée" };
+
+  TK_COLS.forEach(col => {
+    const items = tickets.filter(tk => (tk.statut || "ouvert") === col.key);
+    const colEl = document.createElement("div");
+    colEl.className = "kanban-col";
+    colEl.style.borderTop = `3px solid ${col.fg}`;
+    colEl.innerHTML = `
+      <div class="kanban-col-header" style="background:${col.bg};">
+        <span style="color:${col.fg};font-weight:700;">${col.icon} ${col.label}</span>
+        <span class="k-count" style="background:${col.countBg};color:#fff;">${items.length}</span>
+      </div>
+    `;
+
+    if (!items.length) {
+      colEl.innerHTML += `<div class="kanban-empty">Aucun ticket</div>`;
+    } else {
+      items.forEach(tk => {
+        const card = document.createElement("div");
+        card.className = "kanban-card";
+        card.style.cursor = "pointer";
+        card.title = "Cliquer pour ouvrir ce ticket";
+        const typeLabel = TK_TYPE_LABEL[tk.type] || tk.type || "";
+        const prio = tk.priorite || "";
+        const prioStyle = prio === "haute" ? "background:#ffebee;color:#b71c1c;" :
+                          prio === "moyenne" ? "background:#fff8e1;color:#e65100;" :
+                          "background:#f5f5f5;color:#777;";
+        const prioLabel = prio === "haute" ? "⭐ Haute" : prio === "moyenne" ? "🔸 Moyenne" : prio ? prio : "";
+        card.innerHTML = `
+          <div class="kc-title">${escHtml((tk.titre || tk['desc-situation'] || '(sans titre)').substring(0,80))}</div>
+          <div class="kc-meta">
+            <span class="kc-section" style="background:#e8eaf6;color:#3949ab;">${escHtml(typeLabel)}</span>
+            ${prioLabel ? `<span class="kc-prio" style="${prioStyle}">${prioLabel}</span>` : ''}
+          </div>
+          ${tk.responsable ? `<div style="font-size:10px;color:#666;margin-top:3px;">👤 ${escHtml(tk.responsable)}</div>` : ''}
+          ${tk.site ? `<div style="font-size:10px;color:#666;margin-top:2px;">📍 ${escHtml(tk.site)}</div>` : ''}
+          ${tk.date ? `<div style="font-size:10px;color:#888;margin-top:2px;">📅 ${escHtml(tk.date)}</div>` : ''}
+          ${tk.affaire ? `<div style="font-size:10px;color:#888;margin-top:2px;">📁 ${escHtml(tk.affaire)}</div>` : ''}
+          <div style="font-size:9px;color:#c5cae9;margin-top:4px;text-align:right;">↗ Cliquer pour modifier</div>
+        `;
+        card.addEventListener("click", () => { closeKanban(); openTicketModal(); setTimeout(() => _tkEditTicket(tk.id), 50); });
+        colEl.appendChild(card);
+      });
+    }
+    board.appendChild(colEl);
+  });
+}
+
 function renderKanban() {
+  if (kanbanView === "tickets") { renderKanbanTickets(); return; }
   const priorities = t("priorities");
   const statuses   = t("statuses");
   const board  = document.getElementById("kanban-board");
