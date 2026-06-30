@@ -5741,13 +5741,13 @@ function renderKanban() {
   });
 }
 
-// ── EXPORT KANBAN (PDF / Word / Excel) ─────────────────────────
+// ── EXPORT KANBAN (PDF / Word / Excel) — reproduit l'aspect des colonnes/cartes ──
 function _kanbanBuildTables() {
   const priorities = t("priorities");
   const statuses   = t("statuses");
   const allItems = [];
-  state.sections.forEach(sec => {
-    sec.items.filter(i => i.text.trim()).forEach(item => {
+  state.sections.forEach((sec, si) => {
+    sec.items.filter(i => i.text.trim()).forEach((item, ii) => {
       allItems.push({ ...item, secLabel: sec.label, secEmoji: sec.emoji });
     });
   });
@@ -5756,29 +5756,46 @@ function _kanbanBuildTables() {
     : (KANBAN_COLS[lang]      || KANBAN_COLS.fr);
   const title = kanbanView === "priority" ? "Suivi visuel — Par priorité" : "Suivi visuel — Par état";
 
-  const tables = cols.map(col => {
+  const colCells = cols.map(col => {
     const items = kanbanView === "priority"
       ? allItems.filter(it => it.priority === col.priority)
       : allItems.filter(it => col.statuses.includes(it.status));
-    const rows = items.length
-      ? items.map(item => `
-        <tr>
-          <td>${escHtml(item.text.trim())}</td>
-          <td>${item.secEmoji} ${escHtml(item.secLabel)}</td>
-          <td>${escHtml(statuses[item.status]||item.status)}</td>
-          <td>${escHtml(priorities[item.priority]||'')}</td>
-          <td>${item.pct??0}%</td>
-          <td>${escHtml(item.responsable||'')}</td>
-          <td>${escHtml(item.site||'')}</td>
-          <td>${escHtml(item.dueDate||'')}</td>
-        </tr>`).join('')
-      : `<tr><td colspan="8" style="text-align:center;color:#999;font-style:italic;">Aucun sujet</td></tr>`;
-    return `
-    <table><tr><td class="hdr" colspan="8">${col.icon} ${escHtml(col.label)} (${items.length})</td></tr>
-    <tr><th>Description</th><th>Rubrique</th><th>État</th><th>Priorité</th><th>%</th><th>Responsable</th><th>Site</th><th>Échéance</th></tr>
-    ${rows}
-    </table>`;
+
+    const cardsHTML = items.length
+      ? items.map(item => {
+          const prio = PRIO_STYLE[item.priority] || PRIO_STYLE["non-prioritaire"];
+          const pct  = item.pct ?? 0;
+          const pctC = pct===100?'#1B5E20':pct>=50?'#1565C0':'#E65100';
+          const st   = statuses[item.status] || item.status;
+          return `
+          <div style="border:1px solid #e0e0e0;border-radius:8px;padding:8px 10px;margin-bottom:8px;background:#fff;">
+            <div style="font-weight:700;font-size:11px;color:#222;margin-bottom:4px;">${escHtml(item.text.trim())}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-bottom:3px;">
+              <span style="font-size:9px;background:#eef0f5;color:#555;border-radius:8px;padding:2px 6px;">${item.secEmoji} ${escHtml(item.secLabel)}</span>
+              ${kanbanView==="priority"
+                ? `<span style="font-size:9px;background:#e3f2fd;color:#1565c0;border-radius:8px;padding:2px 6px;">${st}</span>`
+                : `<span style="font-size:9px;background:${prio.bg};color:${prio.color};border-radius:8px;padding:2px 6px;">${prio.label} ${escHtml(priorities[item.priority]||"")}</span>`
+              }
+              <span style="font-size:10px;font-weight:700;color:${pctC};">${pct}%</span>
+            </div>
+            ${item.responsable?`<div style="font-size:9px;color:#666;">👤 ${escHtml(item.responsable)}</div>`:''}
+            ${item.site?`<div style="font-size:9px;color:#666;">📍 ${escHtml(item.site)}</div>`:''}
+            ${item.dueDate?`<div style="font-size:9px;color:#888;">📅 ${item.dueDate}</div>`:''}
+            ${item.comment&&item.comment.trim()?`<div style="font-size:9px;color:#888;font-style:italic;margin-top:2px;">💬 ${stripHtml(item.comment.trim())}</div>`:''}
+          </div>`;
+        }).join('')
+      : `<div style="text-align:center;color:#aaa;font-style:italic;font-size:10px;padding:14px 0;">Aucun sujet</div>`;
+
+    return `<td style="vertical-align:top;padding:0 4px;width:${(100/cols.length).toFixed(2)}%;">
+      <div style="background:${col.bg};border-top:3px solid ${col.fg};border-radius:6px 6px 0 0;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:${col.fg};font-weight:700;font-size:11px;">${col.icon} ${escHtml(col.label)}</span>
+        <span style="background:${col.countBg};color:#fff;border-radius:10px;padding:1px 7px;font-size:10px;font-weight:700;">${items.length}</span>
+      </div>
+      <div style="border:1px solid #eee;border-top:none;border-radius:0 0 6px 6px;padding:8px;min-height:40px;">${cardsHTML}</div>
+    </td>`;
   }).join('');
+
+  const tables = `<table style="width:100%;border-collapse:collapse;"><tr>${colCells}</tr></table>`;
   return { title, tables };
 }
 function _kanbanFileName() {
@@ -5790,11 +5807,9 @@ function exportKanbanPDF() {
   if (!w) { showToast('⚠️ Bloqueur de popup : autorisez les fenêtres pour exporter.'); return; }
   w.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>${escHtml(title)}</title>
   <style>
-    body{font-family:Arial,sans-serif;font-size:11px;color:#000;margin:20px;}
-    table{width:100%;border-collapse:collapse;margin-bottom:14px;}
-    td,th{border:1px solid #000;padding:5px 7px;vertical-align:top;}
-    th{background:#f0f0f0;font-weight:700;text-align:left;}
-    .hdr{font-weight:700;background:#cfd8dc;text-align:center;font-size:13px;}
+    @page { size:A4 landscape; margin:1cm; }
+    body{font-family:Arial,sans-serif;color:#000;margin:16px;}
+    h2{font-size:15px;color:#1a237e;}
   </style></head><body><h2>${escHtml(title)}</h2>${tables}
   <script>window.onload=()=>window.print();<\/script>
   </body></html>`);
@@ -5804,11 +5819,9 @@ function exportKanbanWord() {
   const { title, tables } = _kanbanBuildTables();
   const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><title>${escHtml(title)}</title>
   <style>
-    body{font-family:Arial,sans-serif;font-size:10pt;color:#000;}
-    table{width:100%;border-collapse:collapse;margin-bottom:14px;}
-    td,th{border:1px solid #000;padding:5px 7px;vertical-align:top;}
-    th{background:#f0f0f0;font-weight:700;text-align:left;}
-    .hdr{font-weight:700;background:#cfd8dc;text-align:center;font-size:13pt;}
+    @page { size:842.0pt 595.0pt; margin:1.5cm; }
+    body{font-family:Arial,sans-serif;color:#000;}
+    h2{font-size:14pt;color:#1a237e;}
   </style></head><body><h2>${escHtml(title)}</h2>${tables}</body></html>`;
   dlFile(html, _kanbanFileName() + '.doc', 'application/msword;charset=utf-8');
 }
@@ -5816,11 +5829,8 @@ function exportKanbanExcel() {
   const { title, tables } = _kanbanBuildTables();
   const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><title>${escHtml(title)}</title>
   <style>
-    body{font-family:Arial,sans-serif;font-size:10pt;color:#000;}
-    table{width:100%;border-collapse:collapse;margin-bottom:14px;}
-    td,th{border:1px solid #000;padding:5px 7px;vertical-align:top;}
-    th{background:#f0f0f0;font-weight:700;text-align:left;}
-    .hdr{font-weight:700;background:#cfd8dc;text-align:center;font-size:13pt;}
+    body{font-family:Arial,sans-serif;color:#000;}
+    h2{font-size:14pt;color:#1a237e;}
   </style></head><body><h2>${escHtml(title)}</h2>${tables}</body></html>`;
   dlFile(html, _kanbanFileName() + '.xls', 'application/vnd.ms-excel;charset=utf-8');
 }
