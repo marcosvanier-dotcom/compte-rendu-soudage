@@ -231,10 +231,10 @@ body.compact [id^="rtf-"] { display:none; }
   <div style="position:relative;">
   <div class="action-bar" id="action-bar-quick" style="margin-top:0;padding-top:0;gap:5px;padding-right:28px;">
     <span style="font-size:12px;color:#888;align-self:center;" id="quick-export-label">Export rapide :</span>
-    <button class="action-btn" onclick="exportWord()">⬇ Word</button>
-    <button class="action-btn" onclick="exportPDF()">⬇ PDF</button>
-    <button class="action-btn" onclick="exportExcel()">⬇ Excel</button>
-    <button class="action-btn" onclick="exportCSVClean()">⬇ CSV</button>
+    <button class="action-btn" onclick="openSelectiveExport('word')">⬇ Word</button>
+    <button class="action-btn" onclick="openSelectiveExport('pdf')">⬇ PDF</button>
+    <button class="action-btn" onclick="openSelectiveExport('excel')">⬇ Excel</button>
+    <button class="action-btn" onclick="openSelectiveExport('csv')">⬇ CSV</button>
     <button class="action-btn" onclick="exportEmail()">✉ Email</button>
     <button class="action-btn" onclick="openSelectiveExport()" title="Exporter seulement les rubriques sélectionnées">⬇ Export sélectif</button>
     <button class="action-btn" onclick="archiveTerminated()"><span style="color:#2e7d32;">✅</span> <span id="archive-btn-label">Archiver terminés</span></button>
@@ -681,10 +681,10 @@ body.compact [id^="rtf-"] { display:none; }
     <p style="font-size:12px;color:#666;margin-bottom:10px;">Sélectionner les rubriques à exporter :</p>
     <div id="selective-checks" style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;max-height:200px;overflow-y:auto;"></div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;">
-      <button onclick="runSelectiveExport('pdf')"   style="padding:7px 14px;font-size:12px;background:#fce4ec;border:1px solid #f48fb1;color:#880e4f;border-radius:6px;cursor:pointer;">⬇ PDF</button>
-      <button onclick="runSelectiveExport('word')"  style="padding:7px 14px;font-size:12px;background:#e3f2fd;border:1px solid #90caf9;color:#0d47a1;border-radius:6px;cursor:pointer;">⬇ Word</button>
-      <button onclick="runSelectiveExport('excel')" style="padding:7px 14px;font-size:12px;background:#e8f5e9;border:1px solid #81c784;color:#1b5e20;border-radius:6px;cursor:pointer;">⬇ Excel</button>
-      <button onclick="runSelectiveExport('json')"  style="padding:7px 14px;font-size:12px;background:#fff8e1;border:1px solid #ffe082;color:#e65100;border-radius:6px;cursor:pointer;">⬇ JSON</button>
+      <button id="sel-btn-pdf"   onclick="runSelectiveExport('pdf')"   style="padding:7px 14px;font-size:12px;background:#fce4ec;border:1px solid #f48fb1;color:#880e4f;border-radius:6px;cursor:pointer;transition:opacity .2s;">⬇ PDF</button>
+      <button id="sel-btn-word"  onclick="runSelectiveExport('word')"  style="padding:7px 14px;font-size:12px;background:#e3f2fd;border:1px solid #90caf9;color:#0d47a1;border-radius:6px;cursor:pointer;transition:opacity .2s;">⬇ Word</button>
+      <button id="sel-btn-excel" onclick="runSelectiveExport('excel')" style="padding:7px 14px;font-size:12px;background:#e8f5e9;border:1px solid #81c784;color:#1b5e20;border-radius:6px;cursor:pointer;transition:opacity .2s;">⬇ Excel</button>
+      <button id="sel-btn-json"  onclick="runSelectiveExport('json')"  style="padding:7px 14px;font-size:12px;background:#fff8e1;border:1px solid #ffe082;color:#e65100;border-radius:6px;cursor:pointer;transition:opacity .2s;">⬇ JSON</button>
     </div>
   </div>
 </div>
@@ -4950,7 +4950,7 @@ function runCompare() {
 }
 
 // ── SELECTIVE EXPORT ──────────────────────────────────────────
-function openSelectiveExport() {
+function openSelectiveExport(preFormat) {
   const modal  = document.getElementById("selective-modal");
   const checks = document.getElementById("selective-checks");
   checks.innerHTML = state.sections.map((s,i) =>
@@ -4959,6 +4959,13 @@ function openSelectiveExport() {
       ${s.emoji} ${escHtml(s.label)} <span style="font-size:11px;color:#888;">(${s.items.filter(i=>i.text.trim()).length} item${s.items.length!==1?'s':''})</span>
     </label>`
   ).join('');
+  // Highlight the pre-selected format button
+  ['pdf','word','excel','json','csv'].forEach(f => {
+    const btn = document.getElementById('sel-btn-'+f);
+    if (!btn) return;
+    btn.style.opacity = (!preFormat || f === preFormat) ? '1' : '0.35';
+    btn.style.order   = f === preFormat ? '-1' : '0';
+  });
   modal.style.display = "flex";
 }
 
@@ -5547,6 +5554,54 @@ window.addEventListener('beforeunload', e => {
 // ── DAILY BACKUP ──────────────────────────────────────────────
 const DAILY_BACKUP_KEY = "cr-daily-backup";
 const DAILY_BACKUP_TICKETS_KEY = "cr-daily-backup-tickets";
+
+// ── QUICK EXPORT SECTION SELECTOR ────────────────────────────
+let _qeSelectorOpen = false;
+
+function _qeToggleSelector() {
+  _qeSelectorOpen = !_qeSelectorOpen;
+  const panel = document.getElementById("qe-selector-panel");
+  const btn   = document.getElementById("qe-select-btn");
+  panel.style.display = _qeSelectorOpen ? "flex" : "none";
+  btn.style.background   = _qeSelectorOpen ? "#3949ab" : "#e8eaf6";
+  btn.style.color        = _qeSelectorOpen ? "#fff"    : "#3949ab";
+  if (_qeSelectorOpen) _qeRenderChecks();
+}
+
+function _qeRenderChecks() {
+  const wrap = document.getElementById("qe-checks");
+  wrap.innerHTML = state.sections.map((sec, i) => {
+    const count = sec.items.filter(it => it.text && it.text.trim()).length;
+    return `<label style="font-size:11px;display:flex;align-items:center;gap:4px;cursor:pointer;background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:3px 8px;">
+      <input type="checkbox" class="qe-chk" value="${i}" checked>
+      ${sec.emoji||''} ${escHtml(sec.label)} <span style="color:#aaa;">(${count})</span>
+    </label>`;
+  }).join('');
+}
+
+function _qeSelectAll(v) {
+  document.querySelectorAll('.qe-chk').forEach(c => c.checked = v);
+}
+
+function _qeGetSelected() {
+  const checks = document.querySelectorAll('.qe-chk');
+  if (!checks.length) return null; // panel not open → export all
+  return [...checks].filter(c => c.checked).map(c => parseInt(c.value));
+}
+
+function _qeExport(format) {
+  const selected = _qeGetSelected();
+  const allSections = state.sections;
+  if (selected !== null) {
+    if (!selected.length) { showToast('⚠️ Sélectionnez au moins une rubrique.'); return; }
+    state.sections = allSections.filter((_, i) => selected.includes(i));
+  }
+  if (format === 'word')  exportWord();
+  if (format === 'pdf')   exportPDF();
+  if (format === 'excel') exportExcel();
+  if (format === 'csv')   exportCSVClean();
+  state.sections = allSections;
+}
 
 function saveDailyBackupTickets() {
   try {
