@@ -6310,6 +6310,8 @@ function confirmExportSession() {
 
   const _allTickets = JSON.parse(localStorage.getItem('cr-tickets-v1')||'[]');
   const _tkData = () => {
+    // Tout exporter : toujours inclure tous les tickets (la liste de cases n'est pas rendue)
+    if (_exportMode === 'all') return _allTickets;
     const chk = document.getElementById('export-tickets-check');
     if (!chk || !chk.checked) return [];
     const indiv = [...document.querySelectorAll('.export-ticket-check')];
