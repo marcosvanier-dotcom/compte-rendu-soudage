@@ -670,6 +670,7 @@ body.compact [id^="rtf-"] { display:none; }
       <button onclick="runSelectiveExport('pdf')"   style="padding:7px 14px;font-size:12px;background:#fce4ec;border:1px solid #f48fb1;color:#880e4f;border-radius:6px;cursor:pointer;">⬇ PDF</button>
       <button onclick="runSelectiveExport('word')"  style="padding:7px 14px;font-size:12px;background:#e3f2fd;border:1px solid #90caf9;color:#0d47a1;border-radius:6px;cursor:pointer;">⬇ Word</button>
       <button onclick="runSelectiveExport('excel')" style="padding:7px 14px;font-size:12px;background:#e8f5e9;border:1px solid #81c784;color:#1b5e20;border-radius:6px;cursor:pointer;">⬇ Excel</button>
+      <button onclick="runSelectiveExport('json')"  style="padding:7px 14px;font-size:12px;background:#fff8e1;border:1px solid #ffe082;color:#e65100;border-radius:6px;cursor:pointer;">⬇ JSON</button>
     </div>
   </div>
 </div>
@@ -4956,6 +4957,11 @@ function runSelectiveExport(format) {
   if (format==='pdf')   exportPDF();
   if (format==='word')  exportWord();
   if (format==='excel') exportExcel();
+  if (format==='json') {
+    const { dateStr, ref } = getMetaInfo();
+    const payload = { exportedAt: new Date().toISOString(), metaDate: dateStr, metaRef: ref, sections: state.sections };
+    dlFile(JSON.stringify(payload, null, 2), `cr-export-selectif-${dateStr||'session'}.json`, 'application/json;charset=utf-8');
+  }
   state.sections = allSections;
   document.getElementById("selective-modal").style.display = "none";
 }
