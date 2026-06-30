@@ -439,24 +439,31 @@ body.compact [id^="rtf-"] { display:none; }
   </div>
 </div>
 
-<!-- DAILY BACKUP MODAL -->
+<!-- DAILY BACKUP MODAL — SESSION -->
 <div id="daily-backup-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:2000;align-items:center;justify-content:center;">
   <div style="background:#fff;border-radius:14px;padding:24px;width:520px;max-width:95%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <p style="font-size:15px;font-weight:700;color:#1a237e;">🗄 Sauvegardes quotidiennes (7 jours)</p>
+      <p style="font-size:15px;font-weight:700;color:#1a237e;">🗄 Sauvegardes — Session (7 jours)</p>
       <div style="display:flex;gap:6px;align-items:center;">
         <button onclick="saveDailyBackupManual()" style="padding:5px 12px;font-size:11px;background:#e8f5e9;border:1px solid #81c784;color:#2e7d32;border-radius:6px;cursor:pointer;font-weight:600;">💾 Sauvegarder maintenant</button>
         <button onclick="document.getElementById('daily-backup-modal').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:20px;color:#aaa;">✕</button>
       </div>
     </div>
     <div id="daily-backup-list"></div>
-    <div style="border-top:1px solid #e8eaf6;margin-top:18px;padding-top:14px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <p style="font-size:13px;font-weight:700;color:#e65100;">🎫 Sauvegardes Tickets (7 jours)</p>
+  </div>
+</div>
+
+<!-- DAILY BACKUP MODAL — TICKETS -->
+<div id="daily-backup-tickets-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:2000;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:24px;width:520px;max-width:95%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <p style="font-size:15px;font-weight:700;color:#e65100;">🎫 Sauvegardes — Tickets (7 jours)</p>
+      <div style="display:flex;gap:6px;align-items:center;">
         <button onclick="saveDailyBackupTicketsManual()" style="padding:5px 12px;font-size:11px;background:#fff8e1;border:1px solid #ffe082;color:#e65100;border-radius:6px;cursor:pointer;font-weight:600;">💾 Sauvegarder maintenant</button>
+        <button onclick="document.getElementById('daily-backup-tickets-modal').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:20px;color:#aaa;">✕</button>
       </div>
-      <div id="daily-backup-tickets-list"></div>
     </div>
+    <div id="daily-backup-tickets-list"></div>
   </div>
 </div>
 
@@ -5021,8 +5028,12 @@ async function openDailyBackup() {
       </div>`;
     }).join('');
   }
-  _renderBackupTicketsList();
   document.getElementById("daily-backup-modal").style.display = "flex";
+}
+
+function openDailyBackupTickets() {
+  _renderBackupTicketsList();
+  document.getElementById("daily-backup-tickets-modal").style.display = "flex";
 }
 
 function saveDailyBackupManual() {
@@ -5560,7 +5571,7 @@ function saveDailyBackupTicketsManual() {
     const keys = Object.keys(existing).sort().slice(-7);
     const pruned = {}; keys.forEach(k => pruned[k] = existing[k]);
     localStorage.setItem(DAILY_BACKUP_TICKETS_KEY, JSON.stringify(pruned));
-    _renderBackupTicketsList();
+    openDailyBackupTickets();
     showToast("✅ Sauvegarde tickets enregistrée — " + tickets.length + " ticket(s)");
   } catch(e) { showToast("❌ Erreur lors de la sauvegarde tickets"); }
 }
@@ -7389,6 +7400,7 @@ function importAIItems() {
         <button onclick="document.getElementById('tk-import-file').click()" title="Importer des tickets depuis un fichier JSON" style="background:rgba(255,255,255,0.18);border:none;border-radius:7px;padding:6px 12px;cursor:pointer;color:#fff;font-size:12px;font-weight:700;">⬆ Importer ticket JSON</button>
         <input type="file" id="tk-import-file" accept=".json" style="display:none;" onchange="_tkImportJSON(this)" />
         <button onclick="_tkExportJSON()" title="Exporter tous les tickets en fichier JSON" style="background:rgba(255,255,255,0.18);border:none;border-radius:7px;padding:6px 12px;cursor:pointer;color:#fff;font-size:12px;font-weight:700;">⬇ Exporter ticket JSON</button>
+        <button onclick="closeTicketModal();openDailyBackupTickets()" title="Sauvegardes des tickets (7 jours)" style="background:rgba(255,255,255,0.18);border:none;border-radius:7px;padding:6px 12px;cursor:pointer;color:#fff;font-size:12px;font-weight:700;">🗄 Sauvegardes</button>
         <button onclick="closeTicketModal()" style="background:rgba(255,255,255,0.15);border:none;border-radius:7px;padding:5px 9px;cursor:pointer;color:#fff;font-size:16px;">✕</button>
       </div>
     </div>
