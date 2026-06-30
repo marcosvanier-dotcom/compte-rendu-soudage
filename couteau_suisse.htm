@@ -997,10 +997,10 @@ body.compact [id^="rtf-"] { display:none; }
 
     <div id="histo-export-bar" style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:16px;padding:10px 14px;background:#f5f7ff;border:1px solid #c5cae9;border-radius:8px;">
       <span style="font-size:12px;font-weight:600;color:#3949ab;" id="histo-export-label">Exporter :</span>
-      <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="chk-sections" checked> <span id="chk-lbl-sections">Avancement</span></label>
-      <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="chk-status" checked> <span id="chk-lbl-status">États</span></label>
-      <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="chk-priority" checked> <span id="chk-lbl-priority">Priorités</span></label>
-      <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="chk-tickets" checked> <span id="chk-lbl-tickets">Tickets</span></label>
+      <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="chk-sections" checked onchange="_histoToggle()"> <span id="chk-lbl-sections">Avancement</span></label>
+      <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="chk-status" checked onchange="_histoToggle()"> <span id="chk-lbl-status">États</span></label>
+      <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="chk-priority" checked onchange="_histoToggle()"> <span id="chk-lbl-priority">Priorités</span></label>
+      <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="chk-tickets" checked onchange="_histoToggle()"> <span id="chk-lbl-tickets">Tickets</span></label>
       <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
         <button onclick="exportHistoPNG()" style="padding:5px 12px;font-size:12px;background:#e8f0fe;border:1px solid #aac4f5;color:#1a56c4;border-radius:6px;cursor:pointer;font-weight:500;">⬇ PNG</button>
         <button onclick="exportHistoPDF()" style="padding:5px 12px;font-size:12px;background:#fce4ec;border:1px solid #f48fb1;color:#880e4f;border-radius:6px;cursor:pointer;font-weight:500;">⬇ PDF</button>
@@ -2259,6 +2259,27 @@ function openHistogram() {
   });
 }
 
+function _histoToggle() {
+  const show = (id, visible) => {
+    const el = document.getElementById(id);
+    if (el) el.closest('.chart-wrap, .chart-wrap2, p.modal-section-title') && (el.parentElement.style.display = visible ? '' : 'none');
+  };
+  const s = document.getElementById("chk-sections").checked;
+  const st = document.getElementById("chk-status").checked;
+  const pr = document.getElementById("chk-priority").checked;
+  const tk = document.getElementById("chk-tickets").checked;
+
+  document.getElementById("histo-sub1").style.display = s  ? '' : 'none';
+  document.querySelector("#chart-sections").closest('.chart-wrap').style.display  = s  ? '' : 'none';
+  document.getElementById("histo-sub2").style.display = st ? '' : 'none';
+  document.querySelector("#chart-status").closest('.chart-wrap2').style.display   = st ? '' : 'none';
+  document.getElementById("histo-sub3").style.display = pr ? '' : 'none';
+  document.querySelector("#chart-priority").closest('.chart-wrap2').style.display = pr ? '' : 'none';
+  document.getElementById("histo-sub4").style.display = tk ? '' : 'none';
+  document.querySelector("#chart-tickets-status").closest('.chart-wrap2').style.display = tk ? '' : 'none';
+  document.getElementById("histo-sub5").style.display = tk ? '' : 'none';
+  document.querySelector("#chart-tickets-type").closest('.chart-wrap').style.display    = tk ? '' : 'none';
+}
 function closeHistogram() {
   document.getElementById("histo-modal").classList.remove("open");
 }
