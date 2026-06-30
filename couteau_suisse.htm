@@ -7465,7 +7465,7 @@ function _tkHandleEquipFile(input, which) {
 }
 function _tkDropEquipLogFile(event) {
   const file = event.dataTransfer?.files?.[0];
-  if (!file) return;
+  if (!file) { showToast('⚠️ Aucun fichier détecté dans le glisser-déposer.'); return; }
   _tkProcessEquipLogFile(file);
 }
 function _tkClearEquipFields() {
