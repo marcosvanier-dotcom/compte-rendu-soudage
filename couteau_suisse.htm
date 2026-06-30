@@ -6234,7 +6234,7 @@ function buildExportList() {
   const showItems = _exportMode === 'pick';
 
   wrap.innerHTML = `<label style="display:flex;align-items:center;gap:6px;font-size:11px;color:#666;cursor:pointer;margin-bottom:8px;padding:0 2px;">
-    <input type="checkbox" id="export-sec-all" checked onchange="document.querySelectorAll('.export-sec-check,.export-item-check').forEach(c=>c.checked=this.checked)" style="width:13px;height:13px;" />
+    <input type="checkbox" id="export-sec-all" checked onchange="document.querySelectorAll('.export-sec-check,.export-item-check,#export-tickets-check').forEach(c=>c.checked=this.checked)" style="width:13px;height:13px;" />
     Tout sélectionner / désélectionner
   </label>` + state.sections.map((sec, si) => {
     const items = sec.items.filter(i=>i.text.trim());
@@ -6267,6 +6267,17 @@ function buildExportList() {
       ${itemRows}
     </div>`;
   }).join('');
+
+  // Tickets row
+  const tickets = JSON.parse(localStorage.getItem('cr-tickets-v1')||'[]');
+  wrap.innerHTML += `<div style="border:1px solid #ffe082;border-radius:8px;overflow:hidden;margin-bottom:6px;">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 10px;background:#fff8e1;">
+      <input type="checkbox" id="export-tickets-check" checked style="width:14px;height:14px;" />
+      <span style="font-size:18px;">🎫</span>
+      <span style="flex:1;font-size:12px;font-weight:600;color:#e65100;">Tickets</span>
+      <span style="font-size:10px;color:#888;">${tickets.length} ticket${tickets.length!==1?'s':''}</span>
+    </label>
+  </div>`;
 }
 
 function toggleExportSectionItems(secCheckbox, si) {
@@ -6281,20 +6292,30 @@ function confirmExportSession() {
   const base    = { _type:"cr-session-v2", lang, metaDate:dateVal, metaRef:ref, metaTitle:title,
     metaWeek: document.getElementById("meta-week").textContent };
 
+  const _inclTickets = () => {
+    const chk = document.getElementById('export-tickets-check');
+    return !chk || chk.checked;
+  };
+  const _tkData = JSON.parse(localStorage.getItem('cr-tickets-v1')||'[]');
+
   if (_exportMode === 'all') {
     const session = { ...base, sections: state.sections.map(s=>({id:s.id,label:s.label,emoji:s.emoji,cls:s.cls,items:s.items})) };
+    if (_inclTickets() && _tkData.length) session.tickets = _tkData;
     dlFile(JSON.stringify(session,null,2), fileName+"_session.json", "application/json;charset=utf-8");
-    showToast(`✅ Session complète exportée (${state.sections.length} rubriques)`);
+    showToast(`✅ Session complète exportée (${state.sections.length} rubriques${_inclTickets()&&_tkData.length?' + '+_tkData.length+' ticket(s)':''})`);
 
   } else if (_exportMode === 'each') {
     const selected = [...document.querySelectorAll('.export-sec-check:checked')].map(c=>parseInt(c.value));
-    if (!selected.length) { showToast("Sélectionnez au moins une rubrique."); return; }
+    if (!selected.length && !(_inclTickets() && _tkData.length)) { showToast("Sélectionnez au moins une rubrique."); return; }
     state.sections.filter((_,si)=>selected.includes(si)).forEach(sec => {
       const session = { ...base, sections: [{ id:sec.id, label:sec.label, emoji:sec.emoji, cls:sec.cls, items:sec.items }] };
       const safeName = sec.label.replace(/[^a-zA-Z0-9_\-]/g,'_');
       dlFile(JSON.stringify(session,null,2), `${fileName}_${safeName}_session.json`, "application/json;charset=utf-8");
     });
-    showToast(`✅ ${selected.length} fichier(s) exporté(s)`);
+    if (_inclTickets() && _tkData.length) {
+      dlFile(JSON.stringify({...base, tickets: _tkData},null,2), `${fileName}_tickets.json`, "application/json;charset=utf-8");
+    }
+    showToast(`✅ ${selected.length + (_inclTickets()&&_tkData.length?1:0)} fichier(s) exporté(s)`);
 
   } else {
     // Pick mode — item level selection
@@ -6317,8 +6338,9 @@ function confirmExportSession() {
 
     const total = sections.reduce((a,s)=>a+s.items.length, 0);
     const session = { ...base, sections };
+    if (_inclTickets() && _tkData.length) session.tickets = _tkData;
     dlFile(JSON.stringify(session,null,2), fileName+"_session.json", "application/json;charset=utf-8");
-    showToast(`✅ ${total} élément(s) de ${sections.length} rubrique(s) exporté(s)`);
+    showToast(`✅ ${total} élément(s) de ${sections.length} rubrique(s)${_inclTickets()&&_tkData.length?' + '+_tkData.length+' ticket(s)':''}`);
   }
 
   document.getElementById("export-session-modal").style.display = "none";
