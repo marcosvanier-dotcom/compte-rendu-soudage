@@ -213,6 +213,8 @@ body.compact [id^="rtf-"] { display:none; }
     <button class="action-btn" onclick="openCompareModal()" title="Comparer plusieurs sessions entre elles">🔀 Comparer</button>
     <button class="action-btn" onclick="addNewSection()" title="Ajouter une nouvelle rubrique personnalisée">➕ <span data-t="addSection">Nouvelle rubrique</span></button>
     <button class="action-btn" id="collapse-btn" onclick="toggleAllSections()" title="Réduire ou déplier toutes les rubriques">▼ <span id="collapse-label">Tout réduire</span></button>
+    <button class="action-btn" onclick="undo()" title="Annuler la dernière action (Ctrl+Z)">↩ Annuler</button>
+    <button class="action-btn" onclick="render();showToast('🔄 Page actualisée')" title="Rafraîchir l'affichage">🔄 Actualiser</button>
     <button class="action-btn" onclick="openDailyBackup()" title="Voir les sauvegardes automatiques quotidiennes">🗄 Sauvegardes</button>
     <button class="action-btn" onclick="openTicketModal()" title="Gérer les tickets (incidents, non-conformités, demandes)">🎫 Tickets</button>
     <button class="action-btn" onclick="openAIEmailModal()" title="Importer automatiquement un e-mail via IA" style="background:#e8eaf6;border-color:#9fa8da;color:#1a237e;font-weight:700;">🤖 IA — Import e-mail</button>
@@ -3426,6 +3428,16 @@ document.addEventListener('keydown', e => {
   if (_isEditing) return; // laisse le undo/redo natif du champ s'exécuter, sans toucher state.sections
   if ((e.ctrlKey||e.metaKey) && e.key==='z' && !e.shiftKey) { e.preventDefault(); undo(); }
   if ((e.ctrlKey||e.metaKey) && (e.key==='y' || (e.key==='z' && e.shiftKey))) { e.preventDefault(); redo(); }
+});
+
+// Sur Enter dans un champ simple du CR principal (hors tickets, hors zones multi-lignes),
+// actualise l'affichage en plus du comportement propre au champ.
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || e.shiftKey || e.ctrlKey || e.metaKey) return;
+  const el = e.target;
+  if (!el || el.tagName !== 'INPUT' || el.type === 'file') return;
+  if (el.closest('#ticket-modal') || el.closest('#ai-email-modal')) return;
+  setTimeout(() => render(), 0);
 });
 
 // Patch addItem to save undo
