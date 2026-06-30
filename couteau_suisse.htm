@@ -5469,7 +5469,7 @@ async function _syncDailyBackupFromBackend() {
 window._lastRTF = null;
 
 // ── RICH TEXT EDITOR ──────────────────────────────────────────
-let _rtfSi = null, _rtfIi = null, _rtfMode = 'item';
+let _rtfSi = null, _rtfIi = null, _rtfMode = 'item', _rtfTargetId = null;
 
 function _rtfPositionToolbar(el) {
   const toolbar = document.getElementById("floating-toolbar");
@@ -5495,12 +5495,23 @@ function showTicketDescToolbar() {
   _rtfPositionToolbar(el);
 }
 
+// Toolbar générique réutilisable pour n'importe quel champ contenteditable par id
+// (ex : titre du ticket, pièces à commander/utilisées).
+function showGenericToolbar(id) {
+  _rtfMode = 'generic';
+  _rtfTargetId = id;
+  const el = document.getElementById(id);
+  if (!el) return;
+  _rtfPositionToolbar(el);
+}
+
 function hideFloatingToolbar() {
   const t = document.getElementById("floating-toolbar");
   if (t) t.style.display = "none";
 }
 
 function _rtfActiveEl() {
+  if (_rtfMode === 'generic') return document.getElementById(_rtfTargetId);
   if (_rtfMode === 'ticket') return document.getElementById('tk-input-desc');
   return (_rtfSi!==null && _rtfIi!==null) ? document.getElementById('rtf-'+_rtfSi+'-'+_rtfIi) : document.activeElement;
 }
@@ -5509,14 +5520,14 @@ function rtfFontSize(size) {
   const el = _rtfActiveEl();
   if (el) {
     el.focus(); document.execCommand('fontSize', false, size);
-    if (_rtfMode !== 'ticket') { updateItemRTF(_rtfSi,_rtfIi,el,'comment'); autosave(); }
+    if (_rtfMode !== 'ticket' && _rtfMode !== 'generic') { updateItemRTF(_rtfSi,_rtfIi,el,'comment'); autosave(); }
   }
 }
 function rtfColor(color) {
   const el = _rtfActiveEl();
   if (el) {
     el.focus(); document.execCommand('foreColor', false, color);
-    if (_rtfMode !== 'ticket') { updateItemRTF(_rtfSi,_rtfIi,el,'comment'); autosave(); }
+    if (_rtfMode !== 'ticket' && _rtfMode !== 'generic') { updateItemRTF(_rtfSi,_rtfIi,el,'comment'); autosave(); }
   }
 }
 function rtfExec(cmd, val) {
@@ -5535,7 +5546,7 @@ function rtfExec(cmd, val) {
       updateItemRTF(si, ii, active, field);
     }
     autosave();
-  } else if (_rtfMode !== 'ticket' && _rtfSi !== null && _rtfIi !== null) {
+  } else if (_rtfMode !== 'ticket' && _rtfMode !== 'generic' && _rtfSi !== null && _rtfIi !== null) {
     const el = document.getElementById(`rtf-${_rtfSi}-${_rtfIi}`);
     if (el) updateItemRTF(_rtfSi, _rtfIi, el, 'comment');
   }
@@ -7132,7 +7143,9 @@ function importAIItems() {
         </div>
         <div class="tk-field" id="tk-generic-pieces-field">
           <label>Pièces à commander / utilisées</label>
-          <textarea id="tk-input-pieces" rows="2" placeholder="Ex : joint torique réf. 1234, 2x..."></textarea>
+          <div id="tk-input-pieces" contenteditable="true" data-placeholder="Ex : joint torique réf. 1234, 2x..."
+            style="min-height:50px;max-height:200px;overflow-y:auto;padding:8px 10px;font-size:12px;border:1px solid #ddd;border-radius:6px;font-family:inherit;background:#fff;outline:none;color:#333;line-height:1.6;"
+            onmouseup="showGenericToolbar('tk-input-pieces')" onkeyup="showGenericToolbar('tk-input-pieces')"></div>
         </div>
         <div id="tk-generic-prise-row" style="display:flex;gap:10px;flex-wrap:wrap;">
           <div class="tk-field" style="flex:2;min-width:180px;"><label>Prise en compte (cellule technique ou chef soudeur)</label><input type="text" id="tk-input-prise-en-compte" /></div>
@@ -7176,7 +7189,12 @@ function importAIItems() {
             <div class="tk-field" style="flex:1;"><label>N° affaire</label><input type="text" id="tk-eq-affaire" /></div>
             <div class="tk-field" style="flex:1;"><label>Heures passées</label><input type="number" min="0" step="0.5" id="tk-eq-heures" placeholder="0" /></div>
           </div>
-          <div class="tk-field"><label>Pièces à commander / utilisées</label><textarea id="tk-eq-pieces" rows="2" placeholder="Ex : joint torique réf. 1234, 2x..."></textarea></div>
+          <div class="tk-field">
+            <label>Pièces à commander / utilisées</label>
+            <div id="tk-eq-pieces" contenteditable="true" data-placeholder="Ex : joint torique réf. 1234, 2x..."
+              style="min-height:50px;max-height:200px;overflow-y:auto;padding:8px 10px;font-size:12px;border:1px solid #ddd;border-radius:6px;font-family:inherit;background:#fff;outline:none;color:#333;line-height:1.6;"
+              onmouseup="showGenericToolbar('tk-eq-pieces')" onkeyup="showGenericToolbar('tk-eq-pieces')"></div>
+          </div>
           <div class="tk-field"
             ondragover="event.preventDefault();event.stopPropagation();this.classList.add('tk-dragover')"
             ondragleave="this.classList.remove('tk-dragover')"
@@ -7559,7 +7577,10 @@ function _tkDropEquipLogFile(event) {
   _tkProcessEquipLogFile(file);
 }
 function _tkClearEquipFields() {
-  TK_EQUIP_FIELDS.forEach(f => { const el = document.getElementById('tk-eq-'+f); if (el) el.value = ''; });
+  TK_EQUIP_FIELDS.forEach(f => {
+    const el = document.getElementById('tk-eq-'+f); if (!el) return;
+    if (f === 'pieces') el.innerHTML = ''; else el.value = '';
+  });
   _tkEquipPhotos = { situation: [], solution: [], pieces: [] };
   _tkEquipLogFile = { name:'', data:'' };
   _tkRenderPhotoGallery('situation');
@@ -7573,7 +7594,10 @@ function _tkClearEquipFields() {
 }
 function _tkFillEquipFields(equip) {
   equip = equip || {};
-  TK_EQUIP_FIELDS.forEach(f => { const el = document.getElementById('tk-eq-'+f); if (el) el.value = equip[f] || ''; });
+  TK_EQUIP_FIELDS.forEach(f => {
+    const el = document.getElementById('tk-eq-'+f); if (!el) return;
+    if (f === 'pieces') el.innerHTML = equip[f] || ''; else el.value = equip[f] || '';
+  });
   _tkEquipPhotos = { situation: _tkNormalizePhotos(equip,'situation'), solution: _tkNormalizePhotos(equip,'solution'), pieces: _tkNormalizePhotos(equip,'pieces') };
   _tkEquipLogFile = { name: equip.logFileName||'', data: equip.logFileData||'' };
   _tkRenderPhotoGallery('situation');
@@ -7583,7 +7607,10 @@ function _tkFillEquipFields(equip) {
 }
 function _tkCollectEquipFields() {
   const equip = {};
-  TK_EQUIP_FIELDS.forEach(f => { equip[f] = (document.getElementById('tk-eq-'+f)||{}).value || ''; });
+  TK_EQUIP_FIELDS.forEach(f => {
+    const el = document.getElementById('tk-eq-'+f);
+    equip[f] = el ? (f === 'pieces' ? el.innerHTML : el.value) || '' : '';
+  });
   equip.photosSituation = _tkEquipPhotos.situation;
   equip.photosSolution = _tkEquipPhotos.solution;
   equip.photosPieces = _tkEquipPhotos.pieces;
@@ -7607,7 +7634,7 @@ function _tkBuildFicheTables() {
   <tr><td class="lbl">N° affaire</td><td>${escHtml(eq.affaire)}</td><td class="lbl">Heures passées</td><td>${escHtml(eq.heures)}</td></tr>
   </table>
   <table><tr><td class="hdr" colspan="2">Pièces à commander / utilisées</td></tr>
-  <tr><td style="width:55%;">${escHtml(eq.pieces).replace(/\n/g,'<br>') || '—'}</td><td>${photosHTML(eq.photosPieces)}</td></tr>
+  <tr><td style="width:55%;">${eq.pieces || '—'}</td><td>${photosHTML(eq.photosPieces)}</td></tr>
   </table>
   <table><tr><td class="hdr" colspan="2">Description de la situation dégradée</td></tr>
   <tr><td style="width:55%;">${escHtml(eq['desc-situation']).replace(/\n/g,'<br>')}</td><td>${photosHTML(eq.photosSituation)}</td></tr>
@@ -7678,7 +7705,7 @@ function _tkBuildGenericTicketTables() {
   const heures = document.getElementById('tk-input-heures').value;
   const marque = document.getElementById('tk-input-marque').value.trim();
   const serie = document.getElementById('tk-input-serie').value.trim();
-  const pieces = document.getElementById('tk-input-pieces').value.trim();
+  const pieces = document.getElementById('tk-input-pieces').innerHTML.trim();
   const priseEnCompte = document.getElementById('tk-input-prise-en-compte').value.trim();
   const priseDate = document.getElementById('tk-input-prise-date').value;
   const number = (_tkEditingId && (_tkLoad().find(t=>t.id===_tkEditingId)||{}).number) || '—';
@@ -7697,7 +7724,7 @@ function _tkBuildGenericTicketTables() {
   <tr><td>${desc || '—'}</td></tr>
   </table>
   <table><tr><td class="hdr" colspan="2">Pièces à commander / utilisées</td></tr>
-  <tr><td>${escHtml(pieces).replace(/\n/g,'<br>') || '—'}</td></tr>
+  <tr><td>${pieces || '—'}</td></tr>
   </table>
   <table><tr><td class="hdr" colspan="4">Prise en compte et solde de la demande</td></tr>
   <tr><td class="lbl">Prise en compte cellule technique ou chef soudeur</td><td>${escHtml(priseEnCompte)}</td><td class="lbl">Date/heure</td><td>${priseDate ? new Date(priseDate).toLocaleString('fr-FR') : ''}</td></tr>
@@ -7760,7 +7787,7 @@ function _tkShowNewForm() {
   document.getElementById('tk-input-heures').value = '';
   document.getElementById('tk-input-marque').value = '';
   document.getElementById('tk-input-serie').value = '';
-  document.getElementById('tk-input-pieces').value = '';
+  document.getElementById('tk-input-pieces').innerHTML = '';
   document.getElementById('tk-input-prise-en-compte').value = '';
   document.getElementById('tk-input-prise-date').value = '';
   document.getElementById('tk-history-block').style.display = 'none';
@@ -7786,7 +7813,7 @@ function _tkEditTicket(id) {
   document.getElementById('tk-input-heures').value = ticket.heures || '';
   document.getElementById('tk-input-marque').value = ticket.marque || '';
   document.getElementById('tk-input-serie').value = ticket.serie || '';
-  document.getElementById('tk-input-pieces').value = ticket.pieces || '';
+  document.getElementById('tk-input-pieces').innerHTML = ticket.pieces || '';
   document.getElementById('tk-input-prise-en-compte').value = ticket.priseEnCompte || '';
   document.getElementById('tk-input-prise-date').value = ticket.priseDate || '';
   document.getElementById('tk-history-block').style.display = 'block';
@@ -7829,7 +7856,7 @@ function _tkSaveTicket() {
   const heures = document.getElementById('tk-input-heures').value;
   const marque = document.getElementById('tk-input-marque').value.trim();
   const serie = document.getElementById('tk-input-serie').value.trim();
-  const pieces = document.getElementById('tk-input-pieces').value.trim();
+  const pieces = document.getElementById('tk-input-pieces').innerHTML.trim();
   const priseEnCompte = document.getElementById('tk-input-prise-en-compte').value.trim();
   const priseDate = document.getElementById('tk-input-prise-date').value;
   const tickets = _tkLoad();
