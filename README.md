@@ -49,4 +49,4 @@ Cette version embarque plusieurs protections côté navigateur destinées à dis
 
 ## Droits d'auteur
 
-© Marco Vanier — Tous droits réservés. Ce dépôt est public à titre de démonstration uniquement ; il ne constitue pas une autorisation d'utilisation, de copie ou de redistribution du code. Voir le fichier [LICENSE](LICENSE) pour les conditions complètes.
+© Marcos Vanier — Tous droits réservés. Ce dépôt est public à titre de démonstration uniquement ; il ne constitue pas une autorisation d'utilisation, de copie ou de redistribution du code. Voir le fichier [LICENSE](LICENSE) pour les conditions complètes.
